@@ -280,3 +280,15 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .legal ul { max-width: 64ch; margin: 0 0 .9em; padding-left: 1.3em; }
 .legal li { margin: 0 0 .4em; }
 .legal .goal { font-size: .95rem; }
+
+/* ---------- плашка о cookie ---------- */
+.cookie {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 50;
+  max-width: 760px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  background: var(--surface); color: var(--text); border: 1.5px solid var(--line); border-left: 4px solid var(--red);
+  border-radius: 10px; padding: 12px 16px; box-shadow: 0 6px 24px rgba(20, 30, 70, .22); font-size: .9rem; line-height: 1.45;
+}
+.cookie p { margin: 0; flex: 1 1 320px; }
+.cookie-btns { display: flex; gap: 8px; }
+.cookie .btn { padding: .55em 1em; font-size: .9rem; }
+.sitefoot .linklike { color: var(--ink-2); }
