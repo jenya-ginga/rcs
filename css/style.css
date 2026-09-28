@@ -292,3 +292,28 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .cookie-btns { display: flex; gap: 8px; }
 .cookie .btn { padding: .55em 1em; font-size: .9rem; }
 .sitefoot .linklike { color: var(--ink-2); }
+
+/* ---------- деление уголком и неполные произведения ---------- */
+.cc-d.ul { border-bottom: 2px solid var(--ink); }
+.divcalc { flex-direction: row; align-items: flex-start; }
+.dv-l { display: inline-flex; flex-direction: column; align-items: flex-start; }
+.dv-r { display: inline-flex; flex-direction: column; border-left: 2px solid var(--ink); margin-left: .35em; padding-left: .45em; min-width: 2em; }
+.dv-div { border-bottom: 2px solid var(--ink); line-height: 1.3; padding-bottom: 2px; }
+.dv-q { line-height: 1.3; padding-top: 2px; color: var(--red); }
+
+/* ---------- рисунки, таблицы мер ---------- */
+.fig { max-width: 100%; height: auto; color: var(--ink); display: block; margin: .4em 0; }
+.fig .r { fill: var(--soft); stroke: currentColor; stroke-width: 2.5; }
+.fig .ra, .fig .ref { fill: none; stroke: var(--red); stroke-width: 1.8; }
+.fig .ref { stroke-dasharray: 5 4; }
+.fig .ray { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.fig text { fill: currentColor; font-size: 15px; font-family: var(--serif); font-weight: 700; }
+.figrow { display: flex; flex-wrap: wrap; gap: 8px 26px; align-items: flex-end; margin: .6em 0 1em; }
+.figrow figure { margin: 0; text-align: center; font-size: .9rem; color: var(--ink-2); }
+.figrow .fig { margin: 0 auto; }
+.figrow.small .fig { width: 160px; }
+.figrow.small { gap: 8px 14px; }
+.mt { border-collapse: collapse; margin: .8em 0 1em; font-size: 1rem; }
+.mt th, .mt td { border: 1.5px solid var(--line); padding: .35em .8em; text-align: left; }
+.mt th { background: var(--soft); color: var(--ink); }
+.soft { color: var(--ink-2); font-size: .9em; }
