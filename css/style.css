@@ -272,3 +272,11 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .colsteps { display: block; font-weight: 400; font-size: .95rem; line-height: 1.65; color: var(--text); flex: 1 1 260px; max-width: 46ch; }
 .fb .colsteps { margin-top: .2em; }
 .ex { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.7; }
+
+/* ---------- подвал сайта и страница политики ---------- */
+.sitefoot { max-width: 900px; margin: -46px auto 0; padding: 0 16px 34px; font-size: .85rem; color: var(--ink-2); }
+.sitefoot a { color: var(--ink-2); }
+.sitefoot a:hover { color: var(--ink); }
+.legal ul { max-width: 64ch; margin: 0 0 .9em; padding-left: 1.3em; }
+.legal li { margin: 0 0 .4em; }
+.legal .goal { font-size: .95rem; }
