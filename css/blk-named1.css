@@ -1,0 +1,35 @@
+/* Блок «Именованные числа» (уроки 60–70): столбик мер, лесенка мер, линейка, виджеты. Префикс: n1 */
+
+/* ---------- столбик для составных именованных чисел ---------- */
+.n1col { display: inline-table; border-collapse: collapse; vertical-align: top; font-variant-numeric: tabular-nums; font-weight: 700;
+  color: var(--ink); font-size: clamp(1.05rem, 4.4vw, 1.45rem); margin: .3em 1.2em .3em 0; }
+.n1r { display: table-row; }
+.n1c { display: table-cell; padding: 0 .1em; line-height: 1.4; white-space: nowrap; }
+.n1op { width: 1em; text-align: center; color: var(--red); }
+.n1b, .n1s { text-align: right; }
+.n1u { text-align: left; font-weight: 400; color: var(--ink-2); font-size: .8em; padding: 0 .4em 0 .2em; }
+.n1ln .n1c:not(.n1op) { border-top: 2px solid var(--ink); }
+.n1mk .n1c { color: var(--red); font-size: .62em; font-weight: 400; line-height: 1.2; }
+.n1pad { opacity: .35; }
+
+/* ---------- лесенка мер ---------- */
+.n1lad { display: inline-flex; flex-direction: column; align-items: center; margin: .4em 0; }
+.n1lu { min-width: 3.4em; text-align: center; font-weight: 700; color: var(--ink); background: var(--surface); border: 2px solid var(--ink-2); border-radius: 8px; padding: .1em .6em; }
+.n1ll { display: flex; gap: 1.1em; font-size: .82rem; line-height: 1.5; padding: .05em 0; }
+.n1dn { color: var(--red); }
+.n1up { color: var(--ink-2); }
+
+/* ---------- линейка ---------- */
+.fig .n1hl { fill: var(--mark); stroke: none; }
+.fig .n1strip { fill: none; }
+.fig .n1tick { fill: none; stroke: currentColor; stroke-width: 1.2; }
+.fig text.n1t { font-size: 11px; font-weight: 400; fill: var(--ink-2); }
+.fig text.n1dm { font-size: 10px; }
+
+/* ---------- виджеты ---------- */
+.n1w-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; margin: 0 0 8px; }
+.n1w-row .winput.sm { width: 7.5ch; }
+.n1rn { min-width: 9.5em; margin: 0 0 .7em; }
+.n1ua, .n1ub { margin: 0 .3em .5em 0; color: var(--ink-2); }
+.n1warn { color: var(--warn); background: var(--warn-bg); border-radius: 8px; padding: 6px 10px; }
+.n1sum { display: block; overflow-x: auto; }

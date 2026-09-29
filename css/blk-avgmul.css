@@ -1,0 +1,12 @@
+/* Блок avgmul (уроки 32–40): среднее арифметическое и умножение больших чисел. Префикс .am- */
+.am-z { color: var(--red); }
+.am-z1 { margin-left: .5em; border-left: 2px dashed var(--red); }
+.fig .am-sq { fill: var(--soft); stroke: currentColor; stroke-width: 1.5; }
+.fig .am-ex { fill: var(--red-bg); stroke: var(--red); stroke-width: 2; }
+.fig .am-em { fill: none; stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.fig .am-nw { fill: var(--green-bg); stroke: var(--green); stroke-width: 2; }
+.fig .am-mean { stroke: var(--red); stroke-width: 2; stroke-dasharray: 7 4; }
+.fig .am-base { stroke: currentColor; stroke-width: 2; }
+.am-lv-fig { overflow-x: auto; }
+.am-lv-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.am-lv-tools .btn { font-size: .9rem; padding: .55em 1em; }
