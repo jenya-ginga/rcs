@@ -557,7 +557,7 @@
     spec.forEach(function (s) {
       var made = 0, guard = 0;
       while (made < (s.n || 1) && guard++ < 60) {
-        var q = gens[s.g](s.o || {});
+        var q = R.normQ(gens[s.g](s.o || {}));
         if (seen[q.html]) continue;
         seen[q.html] = 1; q.g = s.g; out.push(q); made++;
       }

@@ -236,6 +236,8 @@
         mountConverter(h);
       } else if (t === 'cut') {
         mountCut(h);
+      } else if (R.widgetMounts && R.widgetMounts[t]) {
+        R.widgetMounts[t](h);        /* свои виджеты уроков: R.widgetMounts.имя = function (host) {…} */
       }
     });
   };

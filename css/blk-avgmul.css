@@ -10,3 +10,26 @@
 .am-lv-fig { overflow-x: auto; }
 .am-lv-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .am-lv-tools .btn { font-size: .9rem; padding: .55em 1em; }
+/* умножение (уроки 35–40) */
+.am-step { display: flex; align-items: center; gap: 8px; }
+.am-step .btn { min-width: 2.4em; font-size: 1.2rem; padding: .3em .6em; }
+.am-k { display: inline-block; text-align: center; width: 3ch; }
+.am-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+.am-chip { background: var(--soft); border: 1.5px solid var(--line); border-radius: 8px; padding: .25em .6em; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+.am-plus { color: var(--red); font-weight: 700; }
+.fig .am-dot { fill: var(--ink); }
+.fig .am-dot1 { fill: var(--red); }
+.am-fam-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.am-eq { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px 12px; margin: 8px 0; }
+.am-box { display: inline-flex; flex-direction: column; align-items: center; }
+.am-n { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); min-width: 2ch; text-align: center; padding: .1em .5em; border: 2px solid var(--ink-2); border-radius: 8px; background: var(--surface); }
+.am-q { color: var(--red); border-style: dashed; border-color: var(--red); }
+.am-cap { font-size: .8rem; color: var(--ink-2); margin-top: 3px; }
+.am-op { font-size: 1.6rem; color: var(--red); align-self: flex-start; padding-top: .1em; }
+.am-ord-row { display: flex; flex-wrap: wrap; gap: 12px 30px; align-items: flex-start; }
+.am-ord-col { padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 10px; }
+.am-ord-col.am-good { border-color: var(--green); background: var(--green-bg); }
+.am-ord-cap { font-size: .95rem; margin-bottom: 6px; max-width: 30ch; }
+.am-cmp { display: flex; flex-wrap: wrap; gap: 8px 30px; align-items: flex-start; margin: .7em 0 1em; }
+.am-cmp figure { margin: 0; }
+.am-cmp figcaption { font-size: .92rem; color: var(--ink-2); margin-bottom: 4px; max-width: 30ch; }

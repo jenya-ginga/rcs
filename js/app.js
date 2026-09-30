@@ -194,7 +194,7 @@
   function renderTheory(panel, n, L, secs) {
     L.theory.forEach(function (t) {
       var s = el('section', 'tblock');
-      s.innerHTML = '<h2>' + t.h + '</h2>' + nbNums(t.html);
+      s.innerHTML = '<h2>' + t.h + '</h2>' + R.nbNums(t.html);
       panel.appendChild(s);
     });
     var done = el('div', 'panel-foot');
@@ -203,13 +203,6 @@
     b.addEventListener('click', function () { setBest(n, 'theory', 100); });
     done.appendChild(b);
     panel.appendChild(done);
-  }
-
-  /* неразрывный пробел внутри «1 000», «12 840» — только в тексте, не в атрибутах тегов */
-  function nbNums(html) {
-    return html.split(/(<[^>]*>)/).map(function (part, i) {
-      return i % 2 ? part : part.replace(/(\d) (?=\d{3}(?!\d))/g, '$1\u00A0');
-    }).join('');
   }
 
   function specOf(L, sec) {

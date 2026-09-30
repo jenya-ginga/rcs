@@ -48,6 +48,20 @@
     return out;
   };
 
+  /* неразрывный пробел внутри «1 000», «12 840» — только в тексте, не внутри тегов и атрибутов */
+  R.nbNums = function (html) {
+    if (typeof html !== 'string') return html;
+    return html.split(/(<[^>]*>)/).map(function (part, i) {
+      return i % 2 ? part : part.replace(/(\d) (?=\d{3}(?!\d))/g, '$1' + NB);
+    }).join('');
+  };
+  /* окончательная обработка вопроса перед показом */
+  R.normQ = function (q) {
+    q.html = R.nbNums(q.html); q.hint = R.nbNums(q.hint); q.explain = R.nbNums(q.explain);
+    if (q.options) q.options = q.options.map(R.nbNums);
+    return q;
+  };
+
   R.tidy = function (t) { return typeof t === 'string' ? t.replace(/\.\.(?!\.)/g, '.') : t; };
   /* при вводе разбивает цифры на группы по три (если курсор в конце) */
   R.groupInput = function (inp, maxDigits) {
