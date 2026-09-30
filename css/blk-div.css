@@ -1,0 +1,10 @@
+/* Блок «Деление больших чисел» (уроки 41–51): стили с префиксом .dv- */
+.dv-cz { color: var(--red); text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: var(--red); }
+.widget .fig { margin: .6em 0; }
+
+/* таблицы в теории: переносить слова, чтобы не появлялась горизонтальная прокрутка на телефоне */
+.dv-t th, .dv-t td { hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; vertical-align: top; }
+@media (max-width: 520px) {
+  .dv-t { font-size: .86rem; }
+  .dv-t th, .dv-t td { padding: .3em .45em; }
+}
