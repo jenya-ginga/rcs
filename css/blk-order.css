@@ -1,0 +1,48 @@
+/* Блок «Порядок действий» (уроки 52–59): классы с префиксом or- */
+.or-expr { overflow-wrap: break-word; }
+.qtext .or-expr { font-size: 1.55rem; line-height: 1.5; }
+
+/* выражение с номерами действий под знаками */
+.or-seq { display: inline-flex; flex-wrap: wrap; align-items: flex-start; gap: .1em .15em; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); line-height: 1.35; vertical-align: top; }
+.or-g { display: inline-flex; align-items: flex-start; white-space: nowrap; }
+.or-t { display: inline-block; }
+.or-op { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 .3em; }
+.or-n, .or-p { display: block; font-style: normal; font-weight: 700; font-size: .74em; line-height: 1.05; color: var(--red); text-align: center; min-width: 1.3em; border-top: 0; margin-top: -.05em; }
+.or-p { color: var(--ink-2); }
+.qtext .or-seq { font-size: 1.35rem; }
+
+/* цепочка равенств: по одному действию в строке */
+.or-chain { display: block; margin: .4em 0 .6em; }
+.or-cl { display: block; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.75; overflow-wrap: break-word; }
+.or-cl + .or-cl { padding-left: .1em; }
+.or-line { display: block; }
+.fb .or-line { margin: .1em 0; }
+
+/* выделение действия и результата в теории и виджетах */
+.or-hl { background: var(--mark); border-radius: 4px; padding: 0 .15em; }
+.or-done { color: var(--green); }
+.or-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.or-tools .btn { font-size: .9rem; padding: .55em 1em; }
+.or-wrow { font-size: clamp(1.15rem, 4.6vw, 1.6rem); font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.6; margin: .5em 0; overflow-wrap: break-word; }
+.or-wnote { min-height: 3em; margin: .3em 0; }
+
+/* таблица «если – то» для способа отношений */
+.or-rt { border-collapse: collapse; margin: .8em 0 1em; font-size: 1rem; background: var(--surface); }
+.or-rt th, .or-rt td { border: 1.5px solid var(--line); padding: .35em .9em; text-align: center; font-variant-numeric: tabular-nums; }
+.or-rt th { background: var(--soft); color: var(--ink); }
+.or-rt td.or-more { background: var(--green-bg); font-weight: 700; }
+.or-rt td.or-k { color: var(--red); font-weight: 700; }
+
+/* рисунок «группы» для способа отношений */
+.fig .or-a { fill: var(--soft); stroke: currentColor; stroke-width: 1.6; }
+.fig .or-b { fill: var(--green-bg); stroke: var(--green); stroke-width: 1.6; }
+.fig .or-q { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-dasharray: 4 3; }
+.fig .or-br { fill: none; stroke: var(--red); stroke-width: 1.8; }
+.fig text.or-lb { font-size: 16px; font-weight: 400; }
+.fig text.or-lr { fill: var(--red); font-size: 14px; }
+.or-fig-wrap { overflow-x: auto; }
+
+@media (max-width: 620px) {
+  .qtext .or-expr { font-size: 1.3rem; }
+  .qtext .or-seq { font-size: 1.15rem; }
+}
