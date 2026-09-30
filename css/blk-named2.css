@@ -1,0 +1,35 @@
+/* Блок «Именованные числа: умножение и деление» (уроки 71–83). Классы с префиксом n2. */
+
+/* столбик с названиями мер: 4 м 85 см × 6 */
+.n2col { border-collapse: collapse; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink);
+  font-size: clamp(1.1rem, 4.6vw, 1.5rem); margin: .3em 1.2em .3em 0; }
+.n2col td { padding: .04em .22em; text-align: right; line-height: 1.3; white-space: nowrap; }
+.n2col td.u { text-align: left; padding-left: .05em; padding-right: .5em; font-weight: 400; color: var(--ink-2); }
+.n2col td.op { text-align: center; color: var(--red); }
+.n2col tr.cr td { font-size: .6em; font-weight: 400; color: var(--red); line-height: 1.1; }
+.n2col tr.ln td { border-top: 2px solid var(--ink); }
+
+/* схема «раздробить — выполнить — превратить» */
+.n2flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px 6px; margin: .8em 0 1em; max-width: 680px; }
+.n2st { flex: 1 1 150px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.n2h { display: block; font-size: .82rem; color: var(--red); margin-bottom: 2px; }
+.n2t { display: block; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.n2ar { align-self: center; color: var(--red); font-size: 1.4rem; }
+
+.n2tape { max-width: 100%; }
+
+/* выражения с именованными числами — чуть мельче, чем обычные примеры */
+.qtext .expr.n2e { font-size: 1.32rem; line-height: 1.5; }
+.qtext .n2cap { display: block; margin-top: .3em; }
+
+/* виджеты */
+.n2w { background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 16px; max-width: 640px; }
+.n2w .conv-row { margin-bottom: 8px; }
+.n2w .wsel { max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
+.n2w .winput.sm { width: 5.6ch; }
+.n2w .n2out { margin-top: 8px; }
+
+@media (max-width: 620px) {
+  .n2ar { width: 100%; text-align: center; transform: rotate(90deg); height: 1.2em; line-height: 1; }
+  .qtext .expr.n2e { font-size: 1.18rem; }
+}
