@@ -33,3 +33,8 @@
 .n1ua, .n1ub { margin: 0 .3em .5em 0; color: var(--ink-2); }
 .n1warn { color: var(--warn); background: var(--warn-bg); border-radius: 8px; padding: 6px 10px; }
 .n1sum { display: block; overflow-x: auto; }
+
+@media (max-width: 480px) {
+  .n1rn { min-width: 100%; margin: 0 0 .1em; }
+  .n1w-row { gap: 4px 8px; }
+}

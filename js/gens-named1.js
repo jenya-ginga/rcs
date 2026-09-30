@@ -33,7 +33,7 @@
 
   /* пары для составных чисел (с весами) и для простых преобразований */
   var CW = [['км', 'м', 3], ['м', 'дм', 1], ['м', 'см', 2], ['дм', 'см', 1], ['см', 'мм', 1], ['т', 'ц', 1], ['т', 'кг', 3], ['ц', 'кг', 2], ['кг', 'г', 3], ['руб.', 'коп.', 2]];
-  var SW = CW.concat([['м', 'мм', 1], ['дм', 'мм', 1]]);
+  var SW = CW.concat([['м', 'мм', 1]]);
   function poolOf(list, o) {
     o = o || {};
     var out = [];
@@ -241,6 +241,22 @@
     };
   });
 
+  /* Запись числа через разряды: 845 = 84 дес. 5 ед. (подготовка к превращению: отделяем справа 1, 2 или 3 цифры) */
+  var CUTN = { 10: ['дес.', 'десятков', 'десятки'], 100: ['сот.', 'сотен', 'сотни'], 1000: ['тыс.', 'тысяч', 'тысячи'] };
+  reg('n1Cut', function (o) {
+    o = o || {};
+    var k = o.k || pick([10, 100, 100, 1000]), z = String(k).length - 1, nm = CUTN[k], qq, rr, n;
+    qq = k === 10 ? rand(2, 99) : k === 100 ? rand(2, 40) : rand(2, 9);
+    rr = Math.random() < 0.3 ? rand(1, 9) : rand(1, k - 1);
+    n = qq * k + rr;
+    return {
+      kind: 'nums', html: 'Сколько всего ' + nm[1] + ' и сколько единиц сверх того в числе ' + num(n) + '?',
+      fields: [{ label: nm[0] }, { label: 'ед.' }], answer: [qq, rr],
+      hint: 'Отдели справа ' + z + ' ' + R.plural(z, ['цифру', 'цифры', 'цифр']) + ': слева останутся ' + nm[2] + ', справа — единицы.',
+      explain: 'Отделяем справа ' + z + ' ' + R.plural(z, ['цифру', 'цифры', 'цифр']) + ': <span class="num">' + R.fmtCut(n, z) + '</span>. Слева ' + fmt(qq) + ' ' + nm[0] + ', справа ' + fmt(rr) + ' ед. Значит, ' + fmt(n) + ' = ' + fmt(qq) + ' ' + nm[0] + ' ' + fmt(rr) + ' ед.'
+    };
+  });
+
   /* Умножение и деление на 10, 100, 1 000 */
   reg('n1Shift', function (o) {
     o = o || {};
@@ -310,7 +326,7 @@
     if (c.t !== 's') lines.push(c.txt + ' = ' + q(V2, P.b));
     return {
       kind: 'choice', html: 'Сравни величины: ' + expr(a.txt + ' … ' + c.txt), options: ops, answer: idx, wide: false,
-      hint: 'Выразите обе величины в одной мере, а потом сравните числа.',
+      hint: 'Вырази обе величины в одной мере, а потом сравни числа.',
       explain: fact(P.a, P.b) + '. ' + lines.join('; ') + '. Сравниваем ' + fmt(V1) + ' и ' + fmt(V2) + ': ' + fmt(V1) + ' ' + ops[idx] + ' ' + fmt(V2) + '.'
     };
   });
@@ -334,8 +350,8 @@
     vals.forEach(function (V, i) { if (want ? V > best : V < best) { best = V; bi = i; } });
     var conv = items.map(function (it, i) { return it.t === 's' ? null : it.txt + ' = ' + q(vals[i], P.b); }).filter(Boolean);
     return {
-      kind: 'choice', html: 'Какая из этих величин ' + (want ? 'самая большая' : 'самая маленькая') + '?', options: texts, answer: bi,
-      hint: 'Выразите все величины в одной мере (в самой мелкой) и сравните числа.',
+      kind: 'choice', html: 'Какая из этих ' + (P.sys === 'len' ? 'длин' : P.sys === 'wt' ? 'масс' : 'сумм') + ' ' + (want ? 'самая большая' : 'самая маленькая') + '?', options: texts, answer: bi,
+      hint: 'Вырази все величины в одной мере (в самой мелкой) и сравни числа.',
       explain: fact(P.a, P.b) + '. ' + (conv.length ? conv.join('; ') + '. ' : '') + 'В ' + PREP[P.b] + ': ' + vals.map(fmt).join('; ') +
         '. ' + (want ? 'Наибольшее' : 'Наименьшее') + ' число ' + fmt(best) + ' — это ' + texts[bi] + '.'
     };
@@ -593,7 +609,7 @@
       kind: 'nums', html: 'Сложи и запиши ответ в ' + PREP[P.a] + ' и ' + PREP[P.b] + ': ' + expr(lst),
       fields: fieldsOf(P), answer: [res.b, res.s],
       hint: addHint(P),
-      explain: 'Запишем столбиком:' + R.n1ColHTML(P, ops, '+') + '<span class="colsteps">' + stepsAdd(P, ops).join('<br>') + '</span>Ответ: ' + cn(P, res) + '.'
+      explain: 'Запишем столбиком:<br>' + R.n1ColHTML(P, ops, '+') + '<span class="colsteps">' + stepsAdd(P, ops).join('<br>') + '</span>Ответ: ' + cn(P, res) + '.'
     };
   });
 
@@ -613,7 +629,7 @@
       kind: 'choice', html: 'Сложи: ' + expr(cn(P, x) + ' + ' + cn(P, y)) + '<br>Какой ответ верный?',
       options: all.map(function (c) { return cn(P, c); }), answer: all.indexOf(res),
       hint: 'Сложи ' + ACC[P.b] + ' отдельно. Если получилось ' + fmt(f) + ' или больше — сделай перенос в ' + ACC[P.a] + '.',
-      explain: 'Запишем столбиком:' + R.n1ColHTML(P, ops, '+') + '<span class="colsteps">' + stepsAdd(P, ops).join('<br>') + '</span>Ответ: ' + cn(P, res) + '.'
+      explain: 'Запишем столбиком:<br>' + R.n1ColHTML(P, ops, '+') + '<span class="colsteps">' + stepsAdd(P, ops).join('<br>') + '</span>Ответ: ' + cn(P, res) + '.'
     };
   });
 
@@ -662,7 +678,7 @@
     return {
       kind: 'nums', html: 'Вычти и запиши ответ в ' + PREP[P.a] + ' и ' + PREP[P.b] + ': ' + expr(lst),
       fields: fieldsOf(P), answer: [res.b, res.s], hint: subHint(P),
-      explain: 'Запишем столбиком:' + R.n1ColHTML(P, ops, '-') + '<span class="colsteps">' + stepsSub(P, x, y).join('<br>') + '<br>Проверка сложением: ' + cn(P, res) + ' + ' + cn(P, y) + ' = ' + cn(P, x) + '.</span>Ответ: ' + cn(P, res) + '.'
+      explain: 'Запишем столбиком:<br>' + R.n1ColHTML(P, ops, '-') + '<span class="colsteps">' + stepsSub(P, x, y).join('<br>') + '<br>Проверка сложением: ' + cn(P, res) + ' + ' + cn(P, y) + ' = ' + cn(P, x) + '.</span>Ответ: ' + cn(P, res) + '.'
     };
   });
 
@@ -684,7 +700,7 @@
       kind: 'choice', html: 'Вычти: ' + expr(cn(P, x) + ' − ' + cn(P, y)) + '<br>Какой ответ верный?',
       options: all.map(function (c) { return cn(P, c); }), answer: all.indexOf(res),
       hint: 'В уменьшаемом ' + GENP[P.b] + ' меньше, чем в вычитаемом. Займи одну крупную меру и не забудь, что ' + GENP[P.a] + ' стало на 1 меньше.',
-      explain: 'Запишем столбиком:' + R.n1ColHTML(P, ops, '-') + '<span class="colsteps">' + stepsSub(P, x, y).join('<br>') + '</span>Ответ: ' + cn(P, res) + '.'
+      explain: 'Запишем столбиком:<br>' + R.n1ColHTML(P, ops, '-') + '<span class="colsteps">' + stepsSub(P, x, y).join('<br>') + '</span>Ответ: ' + cn(P, res) + '.'
     };
   });
 
@@ -963,7 +979,7 @@
     function (three) {                               /* маршрут */
       var P = PP('км', 'м'), A, Dd, C, S2, res;
       do {
-        A = compNZ(P, 8, 25); Dd = compNZ(P, 1, 6); C = compNZ(P, 3, 15); S2 = S(P, A, Dd);
+        A = compNZ(P, 8, 18); Dd = compNZ(P, 1, 6); C = compNZ(P, 3, 15); S2 = S(P, A, Dd);
         res = three ? S(P, S(P, A, S2), C) : S(P, A, S2);
       } while (res.s === 0);
       var mid = S(P, A, S2);
@@ -1017,7 +1033,7 @@
       var P = PP('км', 'м'), B, C, A, res, t;
       do { B = compNZ(P, 3, 20); C = compNZ(P, 2, 12); A = { b: B.b + C.b + rand(3, 15), s: smallOf(P) }; t = D(P, A, B); res = three ? D(P, t, C) : t; } while (res.s === 0 || res.b < 1);
       return { P: P, res: res, text: 'Расстояние между двумя посёлками — ' + cn(P, A) + '. ' + (three ? 'Велосипедист сначала проехал ' + cn(P, B) + ', а потом ещё ' + cn(P, C) + '. Сколько ему осталось проехать?' : 'Велосипедист проехал ' + cn(P, B) + '. Сколько ему осталось проехать?'),
-        list: three ? ['Сколько он проехал после первой части? ' + subLine(P, A, B), 'Сколько осталось? ' + subLine(P, t, C)] : ['Сколько осталось? ' + subLine(P, A, B)] };
+        list: three ? ['Сколько осталось проехать после первой части? ' + subLine(P, A, B), 'Сколько осталось проехать в конце? ' + subLine(P, t, C)] : ['Сколько осталось? ' + subLine(P, A, B)] };
     },
     function (three) {                               /* уголь */
       var P = PP('т', 'кг'), B, C, A, res, t;
@@ -1052,8 +1068,8 @@
     function (three) {                               /* сколько было */
       var P = PP('т', 'кг'), B, C, res;
       do { B = compNZ(P, 1, 9); C = compNZ(P, 1, 12); res = S(P, C, B); } while (res.s === 0);
-      return { P: P, res: res, text: 'В магазине после продажи ' + cn(P, B) + ' сахара осталось ' + cn(P, C) + '. Сколько сахара было в магазине сначала?',
-        list: ['Продали и осталось — значит, сначала было столько, сколько продали и осталось вместе: ' + addLine(P, C, B)] };
+      return { P: P, res: res, text: 'На складе после отправки ' + cn(P, B) + ' сахара осталось ' + cn(P, C) + '. Сколько сахара было на складе сначала?',
+        list: ['Отправили и осталось — значит, сначала было столько, сколько отправили и осталось вместе: ' + addLine(P, C, B)] };
     }
   ];
   reg('n1PSub', function (o) {
@@ -1150,8 +1166,8 @@
   var TWO = [
     { what: 'На хлебозавод привезли на одном грузовике {X} ржаной муки, а на втором — на {Dd} меньше. Из всей муки испекли хлеб. Сколько центнеров хлеба получили, если из 5 ц муки получается 7 ц хлеба?',
       second: 'муки на втором грузовике', port: 500, give: 700, unitOut: 'ц', div: 100, hint: 'Чтобы делить на центнеры, раздроби тонны на центнеры: 1 т = 10 ц.', Tmin: 6000, Tmax: 16000 },
-    { what: 'На консервном заводе засолили рыбу первого сорта — {X}, а рыбы второго сорта — на {Dd} меньше. Сколько килограммов соли израсходовали на всю рыбу, если на каждые 20 кг рыбы кладут 7 кг соли?',
-      second: 'рыбы второго сорта', port: 20, give: 7, unitOut: 'кг', div: 1, hint: 'Чтобы делить на килограммы, раздроби тонны на килограммы: 1 т = 1 000 кг.', Tmin: 8000, Tmax: 20000 },
+    { what: 'На консервном заводе засолили рыбу первого сорта — {X}, а рыбы второго сорта — на {Dd} меньше. Сколько килограммов соли израсходовали на всю рыбу, если на каждые 20 кг рыбы кладут 3 кг соли?',
+      second: 'рыбы второго сорта', port: 20, give: 3, unitOut: 'кг', div: 1, hint: 'Чтобы делить на килограммы, раздроби тонны на килограммы: 1 т = 1 000 кг.', Tmin: 8000, Tmax: 20000 },
     { what: 'В одном амбаре хранилось {X} пшеницы, а в другом — на {Dd} меньше. Всё зерно смололи. Сколько центнеров муки получили, если из 20 ц зерна получается 15 ц муки?',
       second: 'пшеницы в другом амбаре', port: 2000, give: 1500, unitOut: 'ц', div: 100, hint: 'Чтобы делить на центнеры, раздроби тонны на центнеры: 1 т = 10 ц.', Tmin: 6000, Tmax: 16000 },
     { what: 'Ферма в первую неделю сдала на молокозавод {X} молока, а во вторую — на {Dd} меньше. Сколько килограммов сыра получилось из всего молока, если из 10 кг молока делают 1 кг сыра?',
