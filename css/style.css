@@ -185,7 +185,7 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .chain-op { border-style: dashed !important; }
 
 .result { display: flex; gap: 22px; align-items: center; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 20px 24px; max-width: 700px; }
-.grade-big { font-size: 7.5rem; line-height: 1; color: var(--red); transform: rotate(-7deg); animation: stamp .55s cubic-bezier(.2, .9, .3, 1.3) both; }
+.grade-big { font-size: 7.5rem; line-height: 1; color: var(--red); transform: rotate(-7deg); pointer-events: none; animation: stamp .55s cubic-bezier(.2, .9, .3, 1.3) both; }
 @keyframes stamp { from { transform: scale(2.2) rotate(-18deg); opacity: 0; } to { transform: scale(1) rotate(-7deg); opacity: 1; } }
 .res-txt h2 { margin: 0 0 4px; font-size: 1.35rem; color: var(--ink); }
 .res-txt p { margin: 0 0 .3em; }

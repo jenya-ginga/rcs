@@ -209,22 +209,43 @@
     return sec === 'oral' ? L.oral : sec === 'practice' ? L.practice : sec === 'problems' ? L.problems : L.testSpec;
   }
 
+  /* Для зачёта нужна ровно половина заданий (с округлением вверх), остальные — по желанию и на оценку не влияют */
+  function pickHalf(all, shuffled, part) {
+    if (shuffled) { var h = Math.ceil(all.length / 2); return part ? all.slice(h) : all.slice(0, h); }
+    return all.filter(function (q, i) { return i % 2 === part; });
+  }
+  function halves(total) { var r = Math.ceil(total / 2); return { req: r, extra: total - r }; }
+
   function renderTrainerIntro(panel, n, sec, L, secs) {
     var spec = specOf(L, sec), total = 0;
     spec.forEach(function (s) { total += s.n || 1; });
+    var hv = halves(total);
     var wrap = el('div', 'trainer');
     var b = best(n, sec);
     var intro = el('div', 'intro');
-    intro.innerHTML = '<p>' + SEC_INFO[sec] + '</p><p class="meta">Заданий: <b>' + total + '</b>' +
-      (b != null ? ' · лучший результат: <b>' + Math.round(b) + '%</b> (оценка ' + gradeOf(b) + ')' : '') + '</p>';
+    intro.innerHTML = '<p>' + SEC_INFO[sec] + '</p><p class="meta">Для зачёта: <b>' + hv.req + '</b> ' + plural(hv.req, 'задание', 'задания', 'заданий') +
+      (b != null ? ' · лучший результат: <b>' + Math.round(b) + '%</b> (оценка ' + gradeOf(b) + ')' : '') + '</p>' +
+      (hv.extra ? '<p class="meta">Ещё <b>' + hv.extra + '</b> ' + plural(hv.extra, 'дополнительное задание', 'дополнительных задания', 'дополнительных заданий') + ' — по желанию, на оценку они не влияют.</p>' : '');
+    var acts = el('div', 'qbtns');
     var start = el('button', 'btn primary big', b != null ? 'Пройти ещё раз' : 'Начать');
     start.type = 'button';
-    intro.appendChild(start);
+    acts.appendChild(start);
+    var base = { n: n, sec: sec, spec: spec, test: sec === 'test', shuffle: sec === 'oral', secs: secs };
+    if (hv.extra) {
+      var xb = el('button', 'btn ghost', 'Дополнительные задания (' + hv.extra + ')');
+      xb.type = 'button';
+      xb.addEventListener('click', function () { runSet(wrap, Object.assign({}, base, { extra: true })); });
+      acts.appendChild(xb);
+    }
+    intro.appendChild(acts);
     wrap.appendChild(intro);
     panel.appendChild(wrap);
-    start.addEventListener('click', function () {
-      runSet(wrap, { n: n, sec: sec, spec: spec, test: sec === 'test', shuffle: sec === 'oral', secs: secs });
-    });
+    start.addEventListener('click', function () { runSet(wrap, base); });
+  }
+
+  function plural(n, a, b, c) {
+    var m = n % 100, k = n % 10;
+    return (m >= 11 && m <= 14) ? c : k === 1 ? a : (k >= 2 && k <= 4) ? b : c;
   }
 
   /* ================= тренажёр ================= */
@@ -251,14 +272,16 @@
   function attachGrouping(inp) { R.groupInput(inp, 14); }
 
   function runSet(host, cfg) {
-    var qs = R.build(cfg.spec, cfg.shuffle), idx = 0, log = [];
+    var all = R.build(cfg.spec, cfg.shuffle), extra = !!cfg.extra;
+    var qs = pickHalf(all, cfg.shuffle, extra ? 1 : 0), idx = 0, log = [];
+    var nExtra = extra ? 0 : pickHalf(all, cfg.shuffle, 1).length;
     var test = cfg.test;
 
     function show() {
       var q = qs[idx];
       host.innerHTML = '';
       var top = el('div', 'qtop');
-      top.innerHTML = '<span class="qcount">Задание ' + (idx + 1) + ' из ' + qs.length + '</span>' +
+      top.innerHTML = '<span class="qcount">' + (extra ? 'Дополнительное задание ' : 'Задание ') + (idx + 1) + ' из ' + qs.length + '</span>' +
         '<span class="bar"><i style="width:' + Math.round(idx / qs.length * 100) + '%"></i></span>';
       host.appendChild(top);
 
@@ -295,7 +318,7 @@
           area.appendChild(lab); inputs.push(inp);
         });
       } else if (q.kind === 'choice') {
-        var list = el('div', 'choices' + (q.options[0].length <= 2 ? ' short' : ''));
+        var list = el('div', 'choices' + (q.options.every(function (o) { return o.length <= 2; }) ? ' short' : ''));
         q.options.forEach(function (o, k) {
           var b = el('button', 'choice', o); b.type = 'button';
           b.addEventListener('click', function () {
@@ -388,15 +411,21 @@
     function finish() {
       var sum = 0; log.forEach(function (l) { sum += l.score; });
       var pct = sum / log.length * 100, gr = gradeOf(pct);
-      setBest(cfg.n, cfg.sec, pct);
+      if (!extra) setBest(cfg.n, cfg.sec, pct);
       host.innerHTML = '';
       var res = el('div', 'result');
       var note = gr === 5 ? 'Отлично! Так держать.' : gr === 4 ? 'Хорошо. Ещё чуть-чуть до пятёрки.' : gr === 3 ? 'Неплохо, но стоит повторить теорию и пройти ещё раз.' : 'Пока рано двигаться дальше. Перечитай урок и попробуй снова — числа будут новые.';
-      res.innerHTML = '<div class="grade-big hand g' + gr + '">' + gr + '</div>' +
-        '<div class="res-txt"><h2>' + SEC_NAMES[cfg.sec] + ': ' + Math.round(pct) + '%</h2>' +
-        '<p>' + note + '</p><p class="meta">Верно: ' + log.filter(function (l) { return l.score === 1; }).length + ' с первой попытки' +
+      var stat = 'Верно: ' + log.filter(function (l) { return l.score === 1; }).length + ' с первой попытки' +
         (log.some(function (l) { return l.score === 0.5; }) ? ', ' + log.filter(function (l) { return l.score === 0.5; }).length + ' со второй' : '') +
-        ', ошибок: ' + log.filter(function (l) { return l.score === 0; }).length + '.</p></div>';
+        ', ошибок: ' + log.filter(function (l) { return l.score === 0; }).length + '.';
+      if (extra) {
+        res.innerHTML = '<div class="res-txt"><h2>Дополнительные задания: ' + Math.round(pct) + '%</h2>' +
+          '<p>Это тренировка по желанию — на оценку за урок она не влияет.</p><p class="meta">' + stat + '</p></div>';
+      } else {
+        res.innerHTML = '<div class="grade-big hand g' + gr + '">' + gr + '</div>' +
+          '<div class="res-txt"><h2>' + SEC_NAMES[cfg.sec] + ': ' + Math.round(pct) + '%</h2>' +
+          '<p>' + note + '</p><p class="meta">' + stat + '</p></div>';
+      }
       host.appendChild(res);
 
       var wrong = log.filter(function (l) { return l.score < 1; });
@@ -414,6 +443,11 @@
       }
 
       var acts = el('div', 'qbtns');
+      if (!extra && nExtra) {
+        var xb = el('button', 'btn ghost', 'Дополнительные задания (' + nExtra + ')'); xb.type = 'button';
+        xb.addEventListener('click', function () { runSet(host, Object.assign({}, cfg, { extra: true })); });
+        acts.appendChild(xb);
+      }
       var again = el('button', 'btn ghost', 'Ещё раз с новыми числами'); again.type = 'button';
       again.addEventListener('click', function () { runSet(host, cfg); });
       acts.appendChild(again);
