@@ -1,0 +1,50 @@
+/* Блок «Земельные и квадратные меры. Задачи с именованными числами» (уроки 92–100). Классы с префиксом ld. */
+
+/* рисунки: участки, сетки из клеток */
+.fig .gl { fill: none; stroke: var(--line); stroke-width: 1; }
+.fig .hl { fill: var(--mark); stroke: none; }
+.fig .nf { fill: none; }
+.fig .bg { fill: var(--soft); stroke: none; }
+.fig .rr { fill: none; stroke: currentColor; stroke-width: 2.5; }
+.fig .ldc { font-size: 17px; fill: var(--ink); }
+.fig .ldcap { font-size: 16px; fill: var(--red); }
+.fig.ldsq { width: 250px; }
+.fig.ldplot { width: 340px; }
+.figrow figcaption { margin-top: 2px; }
+
+/* выражения в заданиях с величинами */
+.qtext .expr.lde { font-size: 1.4rem; line-height: 1.5; }
+.qtext .ldcap { display: block; margin-top: .3em; }
+
+/* лестница мер площади: км² → га → а → м² → дм² → см² → мм² */
+.ldlad { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 2px; margin: .8em 0 1em; max-width: 640px; }
+.ldu { background: var(--surface); border: 1.5px solid var(--ink); border-radius: 8px; padding: .1em .55em; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ldu.hl { background: var(--mark); }
+.ldx { display: inline-flex; flex-direction: column; align-items: center; color: var(--red); font-size: .74rem; line-height: 1; padding: 0 3px; }
+.ldx i { font-style: normal; font-weight: 700; }
+.ldx s { text-decoration: none; font-size: 1.1rem; line-height: 1; }
+
+/* таблица «все меры» */
+.ldmt td:first-child { font-weight: 700; color: var(--ink); }
+
+/* виджеты */
+.ldw { background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 16px; max-width: 640px; }
+.ldw .conv-row { margin-bottom: 8px; }
+.ldw .wsel { max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
+.ldw .winput.sm { width: 6.4ch; }
+.ldw .ldi { text-align: right; }
+.ldf { display: flex; flex-direction: column; gap: 3px; }
+.ldout { margin-top: 6px; }
+.ldout .facts { margin-top: .4em; }
+.ldfig .fig { margin: .2em 0; }
+.ldfig .soft { margin: 0 0 .4em; }
+
+/* запись решения задач: план и действия */
+.ldplan { margin: .6em 0 1em; padding: 10px 14px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; max-width: 640px; }
+.ldplan p { margin: .2em 0; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.55; }
+.ldplan p span { font-weight: 400; color: var(--ink-2); }
+
+@media (max-width: 620px) {
+  .qtext .expr.lde { font-size: 1.2rem; }
+  .ldw { padding: 12px; }
+}

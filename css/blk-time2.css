@@ -1,0 +1,52 @@
+/* Блок «Время: умножение и деление» (уроки 132–142). Классы с префиксом t2. */
+
+/* столбик по мерам: 3 ч 50 мин × 4 */
+.t2col { border-collapse: collapse; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink);
+  font-size: clamp(1.05rem, 4.4vw, 1.4rem); margin: .3em 1.2em .3em 0; }
+.t2col td { padding: .04em .2em; text-align: right; line-height: 1.3; white-space: nowrap; }
+.t2col td.u { text-align: left; padding-left: .05em; padding-right: .55em; font-weight: 400; color: var(--ink-2); }
+.t2col td.op { text-align: center; color: var(--red); }
+.t2col tr.cr td { font-size: .6em; font-weight: 400; color: var(--red); line-height: 1.1; }
+.t2col tr.ln td { border-top: 2px solid var(--ink); }
+.t2col tr.raw td { color: var(--ink-2); }
+.t2col tr.raw td.d { font-weight: 400; }
+
+/* таблица деления по мерам */
+.t2divrow { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 28px; margin: .7em 0 1em; }
+.t2dv { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: .95rem; margin: .3em 0; }
+.t2dv th, .t2dv td { border: 1.5px solid var(--line); padding: .3em .6em; text-align: left; line-height: 1.4; }
+.t2dv th { background: var(--soft); color: var(--ink); font-weight: 700; font-size: .85rem; }
+.t2dv td.q { font-weight: 700; color: var(--ink); white-space: nowrap; }
+
+/* схема «раздробить — выполнить — превратить» */
+.t2flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px 6px; margin: .8em 0 1em; max-width: 680px; }
+.t2st { flex: 1 1 150px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.t2h { display: block; font-size: .82rem; color: var(--red); margin-bottom: 2px; }
+.t2t { display: block; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.t2ar { align-self: center; color: var(--red); font-size: 1.4rem; }
+
+/* лестница мер времени */
+.t2ladder { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 2px; margin: .8em 0 1em; }
+.t2lu { background: var(--surface); border: 2px solid var(--ink); border-radius: 10px; padding: .35em .8em; font-weight: 700; color: var(--ink); }
+.t2la { display: inline-flex; flex-direction: column; align-items: center; min-width: 4.2em; font-style: normal; color: var(--red); font-size: .9rem; line-height: 1.35; }
+.t2la i { font-style: normal; font-weight: 700; }
+
+.t2tape { max-width: 100%; }
+
+/* выражения с именованными числами — чуть мельче, чем обычные примеры */
+.qtext .expr.t2e { font-size: 1.32rem; line-height: 1.5; }
+.qtext .t2cap { display: block; margin-top: .3em; }
+
+/* виджеты */
+.t2w { background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 16px; max-width: 700px; }
+.t2w .conv-row { margin-bottom: 8px; }
+.t2w .wsel { max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
+.t2w .winput.sm { width: 5.4ch; }
+.t2w .t2out { margin-top: 8px; }
+.t2w .t2u { color: var(--ink-2); }
+
+@media (max-width: 620px) {
+  .t2ar { width: 100%; text-align: center; transform: rotate(90deg); height: 1.2em; line-height: 1; }
+  .qtext .expr.t2e { font-size: 1.18rem; }
+  .t2la { min-width: 3.2em; }
+}

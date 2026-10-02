@@ -1,0 +1,27 @@
+/* Блок sumratio (уроки 101–107): стили с префиксом .sv- */
+
+/* схема из равных отрезков-«частей» */
+.sv-rods { max-width: 100%; height: auto; margin: .5em 0; }
+.fig .sv-r { fill: var(--surface); stroke: currentColor; stroke-width: 2; }
+.fig .sv-hl { fill: var(--mark); }
+.fig .sv-ex { fill: none; stroke: var(--red); stroke-width: 1.8; stroke-dasharray: 5 4; }
+.fig text.sv-nm { font-weight: 400; fill: var(--ink-2); }
+.fig text.sv-en { font-weight: 700; }
+.fig text.sv-q { fill: var(--red); font-weight: 700; }
+.fig .sv-cut { fill: none; stroke: var(--red); stroke-width: 2; }
+.sv-figwrap { overflow-x: auto; max-width: 100%; }
+
+@media (max-width: 620px) {
+  .sv-rods { margin: .3em 0; }
+}
+
+/* виджет «Делим на части» */
+.sv-ks { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+.sv-kl { margin-right: 4px; color: var(--ink-2); }
+.sv-kb { min-width: 2.6em; font-weight: 700; padding: .4em .7em; }
+.sv-kb.sv-on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+:root[data-theme="dark"] .sv-kb.sv-on { color: #10201b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sv-kb.sv-on { color: #10201b; } }
+.sv-wnote { min-height: 3.2em; margin: .3em 0; }
+.sv-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.sv-tools .btn { font-size: .9rem; padding: .55em 1em; }

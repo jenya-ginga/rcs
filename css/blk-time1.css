@@ -1,0 +1,95 @@
+/* Блок «Время: единицы и вычисления» (уроки 122–131). Классы с префиксом t1. */
+
+/* выражения с мерами времени — чуть мельче, чем обычные примеры */
+.qtext .expr.t1e { font-size: 1.32rem; line-height: 1.55; }
+
+/* столбик с мерами времени: 3 ч 45 мин + 2 ч 30 мин */
+.t1col { border-collapse: collapse; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink);
+  font-size: clamp(1.05rem, 4.4vw, 1.4rem); margin: .3em 1.2em .3em 0; }
+.t1col td { padding: .04em .2em; text-align: right; line-height: 1.3; white-space: nowrap; }
+.t1col td.u { text-align: left; padding-left: .05em; padding-right: .55em; font-weight: 400; color: var(--ink-2); }
+.t1col td.op { text-align: center; color: var(--red); width: 1em; }
+.t1col tr.mk td { font-size: .62em; font-weight: 400; color: var(--red); line-height: 1.1; }
+.t1col tr.lim td { font-size: .6em; font-weight: 400; color: var(--ink-2); line-height: 1.1; }
+.t1col tr.ln td { border-top: 2px solid var(--ink); }
+
+/* лесенка мер */
+.t1lad { display: inline-flex; flex-direction: column; align-items: stretch; width: min(100%, 250px); margin: .4em 1.2em .6em 0; vertical-align: top; }
+.t1lu { text-align: center; border: 2px solid var(--ink); border-radius: 10px; padding: .2em .8em; font-weight: 700; color: var(--ink); background: var(--surface); }
+.t1ll { display: flex; justify-content: space-between; padding: .15em 1.1em; font-size: .95rem; font-weight: 700; }
+.t1dn { color: var(--red); }
+.t1up { color: var(--ink-2); }
+
+/* схема «раздробить — прибавить — раздробить» */
+.t1flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px 6px; margin: .8em 0 1em; max-width: 720px; }
+.t1st { flex: 1 1 160px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.t1h { display: block; font-size: .82rem; color: var(--red); margin-bottom: 2px; }
+.t1t { display: block; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.t1ar { align-self: center; color: var(--red); font-size: 1.4rem; }
+
+/* цепочка делений при превращении */
+.t1turn { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 26px; margin: .6em 0 1em; }
+.t1tc { display: flex; flex-direction: column; align-items: flex-start; }
+.t1cap { font-size: .9rem; color: var(--ink); margin: 0 0 0 .2em; max-width: 24ch; line-height: 1.4; }
+
+/* циферблат */
+.fig.t1clock { color: var(--ink); margin: .4em 0; }
+.fig .t1face { fill: var(--surface); stroke: currentColor; stroke-width: 3; }
+.fig .t1tick { stroke: currentColor; stroke-width: 1.2; opacity: .75; }
+.fig .t1tick.big { stroke-width: 3; opacity: 1; }
+.fig text.t1num { fill: currentColor; font-size: 19px; font-weight: 700; }
+.fig text.t1n24 { fill: var(--red); font-size: 13px; font-weight: 700; }
+.fig .t1hh { stroke: currentColor; stroke-width: 8; stroke-linecap: round; }
+.fig .t1mh { stroke: currentColor; stroke-width: 4; stroke-linecap: round; }
+.fig .t1hub { fill: var(--red); }
+.fig.t1cl { margin: 0 auto; }
+.fig.t1clock.t1cl .t1num { font-size: 22px; }
+.choices:has(.t1cl) { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 340px; }
+.choices .choice .fig.t1cl { width: 100%; max-width: 130px; height: auto; }
+.t1cf { flex: none; }
+.t1cc { flex: 1 1 250px; min-width: 0; }
+.t1cc .fld { margin-bottom: 8px; }
+.t1rng { width: 100%; max-width: 280px; accent-color: var(--ink); }
+
+/* линия времени */
+.fig.t1line { max-width: 100%; height: auto; margin: .6em 0 .2em; }
+.fig .t1ax { stroke: currentColor; stroke-width: 2; }
+.fig .t1tk { stroke: currentColor; stroke-width: 1.5; }
+.fig text.t1tl { fill: currentColor; font-size: 11.5px; font-weight: 400; }
+.fig .t1sp { fill: none; stroke: var(--red); stroke-width: 2.2; }
+.fig text.t1sl { fill: var(--red); font-size: 13px; font-weight: 700; }
+.fig .t1dot { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.fig .t1pt { fill: var(--ink); }
+.fig text.t1ml { fill: currentColor; font-size: 13px; font-weight: 700; }
+
+/* «кулак» */
+.fig.t1fist { max-width: 100%; height: auto; }
+.fig .t1fl { fill: none; stroke: var(--ink-2); stroke-width: 2.5; stroke-linecap: round; }
+.fig .t1kn { fill: var(--soft); stroke: var(--ink); stroke-width: 2.5; }
+.fig .t1vl { fill: var(--paper); stroke: var(--ink-2); stroke-width: 2; }
+.fig text.t1m1, .fig text.t1m2 { fill: var(--ink-2); font-size: 15px; font-weight: 400; }
+.fig text.t1m1.k, .fig text.t1m2.k { fill: var(--red); font-weight: 700; }
+.fig text.t1mc { fill: var(--ink-2); font-size: 12px; font-weight: 400; font-style: italic; }
+
+/* таблицы */
+.t1mon td:first-child, .t1meas td:first-child { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.t1mon td, .t1meas td { vertical-align: top; }
+
+/* виджеты */
+.t1w { background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 16px; max-width: 640px; }
+.t1wrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: flex-end; margin-bottom: 8px; }
+.t1ck { align-items: flex-start; }
+.t1w .wsel { max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
+.t1w .winput.sm { width: 5.4ch; }
+.t1cell { display: inline-flex; align-items: baseline; gap: 6px; }
+.t1ul { color: var(--ink-2); font-size: .95rem; min-width: 2.4ch; }
+.t1rn { min-width: 11ch; }
+.t1w .facts { margin: .5em 0 0; }
+.t1w .t1warn { color: var(--warn); }
+.t1w .colrow { margin: .4em 0 .2em; }
+
+@media (max-width: 620px) {
+  .t1ar { width: 100%; text-align: center; transform: rotate(90deg); height: 1.2em; line-height: 1; }
+  .qtext .expr.t1e { font-size: 1.18rem; }
+  .t1w { padding: 12px; }
+}
