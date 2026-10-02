@@ -1005,5 +1005,319 @@
     return { kind: 'num', html: q, answer: ans, hint: hint, explain: expl };
   });
 
+  /* ================= последовательное умножение и деление (уроки 106–107) ================= */
+  /* разложения числа на два множителя (сначала «любимые») */
+  var FACT = { 4: [[2, 2]], 6: [[2, 3], [3, 2]], 8: [[2, 4], [4, 2]], 9: [[3, 3]], 12: [[3, 4], [2, 6], [4, 3], [6, 2]], 14: [[2, 7], [7, 2]],
+    15: [[3, 5], [5, 3]], 16: [[2, 8], [4, 4], [8, 2]], 18: [[2, 9], [3, 6], [6, 3], [9, 2]], 20: [[4, 5], [5, 4], [2, 10]],
+    21: [[3, 7], [7, 3]], 24: [[3, 8], [4, 6], [6, 4], [8, 3]] };
+  var FACT3 = { 8: [2, 2, 2], 12: [2, 2, 3], 18: [2, 3, 3], 24: [2, 3, 4] };
+  var KDEF = [4, 6, 8, 9, 12, 15];
+  /* a × k = a × f1 × f2 = x1 × f2 = ответ  (или a : k = a : f1 : f2 = …) */
+  function seqChain(a, k, fs, op) {
+    var cur = a, out = [fmt(a) + ' ' + op + ' ' + k, fmt(a) + ' ' + op + ' ' + fs.join(' ' + op + ' ')], i;
+    for (i = 0; i < fs.length; i++) {
+      cur = op === '×' ? cur * fs[i] : cur / fs[i];
+      out.push([fmt(cur)].concat(fs.slice(i + 1)).join(' ' + op + ' '));
+    }
+    return out.join(' = ') + '.';
+  }
+  function kAsProd(k, fs) { return k + ' = ' + fs.join(' × '); }
+  function numA(k, lo, hi) { var a, g = 0; do { a = rand(lo, hi); g++; } while (a % 10 === 0 && g < 40); return a; }
+
+  /* o.k — допустимые множители; o.three — «множитель из трёх» (8 = 2 × 2 × 2); o.amin/o.amax */
+  reg('svSeqMul', function (o) {
+    var k = pick(o.k || KDEF), fs = o.three && FACT3[k] ? FACT3[k] : pick(FACT[k]);
+    var a = numA(k, o.amin || 12, o.amax || (k <= 9 ? 99 : 60));
+    var say = pick(['Вычисли, умножая по очереди: ', 'Умножь последовательно: ', 'Разложи второй множитель на множители и вычисли: ']);
+    return { kind: 'num', html: say + expr(fmt(a) + ' × ' + k + ' ='), answer: a * k,
+      hint: 'Разложи ' + k + ' на множители: ' + kAsProd(k, fs) + '. Умножь ' + a + ' на первый множитель, а результат — на второй' + (fs.length > 2 ? ' и на третий' : '') + '.',
+      explain: seqChain(a, k, fs, '×') };
+  });
+  reg('svSeqDiv', function (o) {
+    var k = pick(o.k || KDEF), fs = o.three && FACT3[k] ? FACT3[k] : pick(FACT[k]);
+    var q = rand(o.qmin || (k <= 9 ? 12 : 6), o.qmax || (k <= 9 ? 99 : 50)), a = q * k;
+    var say = pick(['Вычисли, деля по очереди: ', 'Раздели последовательно: ', 'Разложи делитель на множители и вычисли: ']);
+    return { kind: 'num', html: say + expr(fmt(a) + ' : ' + k + ' ='), answer: q,
+      hint: 'Разложи ' + k + ' на множители: ' + kAsProd(k, fs) + '. Раздели ' + fmt(a) + ' на первый множитель, а результат — на второй' + (fs.length > 2 ? ' и на третий' : '') + '.',
+      explain: seqChain(a, k, fs, ':') };
+  });
+
+  /* вставь пропущенное число; o.op 'mul' | 'div' | 'mix'; o.types из 'k' 'f' 'mid' */
+  reg('svSeqFill', function (o) {
+    var op = o.op === 'mix' ? pick(['mul', 'div']) : (o.op || 'mul'), sg = op === 'mul' ? '×' : ':', k = pick(o.k || KDEF), fs = pick(FACT[k]), f1 = fs[0], f2 = fs[1];
+    var type = pick(o.types || ['k', 'f', 'mid']), a, q, A, x1, ans, line, hint, why;
+    if (op === 'mul') { A = numA(k, 12, k <= 9 ? 60 : 40); x1 = A * f1; }
+    else { q = rand(k <= 9 ? 8 : 5, k <= 9 ? 60 : 30); A = q * k; x1 = A / f1; }
+    var AF = fmt(A);
+    if (type === 'k') { line = AF + ' ' + sg + ' □ = ' + AF + ' ' + sg + ' ' + f1 + ' ' + sg + ' ' + f2; ans = k;
+      hint = 'Справа число умножают (делят) по очереди на ' + f1 + ' и на ' + f2 + '. Какому одному числу это равносильно? Перемножь ' + f1 + ' и ' + f2 + '.';
+      why = f1 + ' × ' + f2 + ' = ' + k + ', значит ' + AF + ' ' + sg + ' ' + k + ' = ' + AF + ' ' + sg + ' ' + f1 + ' ' + sg + ' ' + f2 + '.'; }
+    else if (type === 'f') { line = AF + ' ' + sg + ' ' + k + ' = ' + AF + ' ' + sg + ' ' + f1 + ' ' + sg + ' □'; ans = f2;
+      hint = 'Число ' + k + ' разложено на множители. Один из них ' + f1 + '. Каким числом нужно умножить ' + f1 + ', чтобы получилось ' + k + '?';
+      why = k + ' = ' + f1 + ' × ' + f2 + ', значит пропущен второй множитель ' + f2 + '.'; }
+    else { line = AF + ' ' + sg + ' ' + k + ' = ' + AF + ' ' + sg + ' ' + f1 + ' ' + sg + ' ' + f2 + ' = □ ' + sg + ' ' + f2; ans = x1;
+      hint = 'Выполни первое действие: ' + AF + ' ' + sg + ' ' + f1 + '.';
+      why = AF + ' ' + sg + ' ' + f1 + ' = ' + fmt(x1) + '. Дальше: ' + fmt(x1) + ' ' + sg + ' ' + f2 + ' = ' + fmt(op === 'mul' ? x1 * f2 : x1 / f2) + '.'; }
+    return { kind: 'num', html: 'Вставь пропущенное число: ' + expr(line), answer: ans, hint: hint, explain: why };
+  });
+
+  /* какое выражение равно …; o.op 'mul' | 'div' | 'mix' */
+  reg('svEqual', function (o) {
+    var op = o.op === 'mix' ? pick(['mul', 'div']) : (o.op || 'mul'), k = pick(o.k || KDEF), fs = pick(FACT[k]), f1 = fs[0], f2 = fs[1], a, target, good, bad, why;
+    if (op === 'mul') {
+      a = rand(12, 60); target = a * k;
+      good = { t: a + ' × ' + f1 + ' × ' + f2, v: a * f1 * f2 };
+      bad = [{ t: a + ' × ' + f1 + ' + ' + f2, v: a * f1 + f2 }, { t: a + ' × (' + f1 + ' + ' + f2 + ')', v: a * (f1 + f2) }, { t: a + ' + ' + f1 + ' × ' + f2, v: a + f1 * f2 },
+        { t: a + ' : ' + f1 + ' × ' + f2, v: a / f1 * f2 }, { t: '(' + a + ' + ' + f1 + ') × ' + f2, v: (a + f1) * f2 }];
+      why = 'Число ' + k + ' равно ' + f1 + ' × ' + f2 + ', поэтому умножить на ' + k + ' — то же, что умножить по очереди на ' + f1 + ' и на ' + f2 + '. Проверка: ' + a + ' × ' + k + ' = ' + fmt(target) + ' и ' + a + ' × ' + f1 + ' × ' + f2 + ' = ' + fmt(a * f1) + ' × ' + f2 + ' = ' + fmt(target) + '.';
+    } else {
+      var q = rand(6, 40); a = q * k; target = q;
+      good = { t: a + ' : ' + f1 + ' : ' + f2, v: q };
+      bad = [{ t: a + ' : ' + f1 + ' × ' + f2, v: a / f1 * f2 }, { t: a + ' : (' + f1 + ' + ' + f2 + ')', v: a / (f1 + f2) }, { t: a + ' : ' + f1 + ' + ' + f2, v: a / f1 + f2 },
+        { t: a + ' × ' + f1 + ' : ' + f2, v: a * f1 / f2 }, { t: a + ' : ' + f2 + ' × ' + f1, v: a / f2 * f1 }];
+      why = 'Число ' + k + ' равно ' + f1 + ' × ' + f2 + ', поэтому разделить на ' + k + ' — то же, что разделить по очереди на ' + f1 + ' и на ' + f2 + '. Проверка: ' + a + ' : ' + k + ' = ' + q + ' и ' + a + ' : ' + f1 + ' : ' + f2 + ' = ' + fmt(a / f1) + ' : ' + f2 + ' = ' + q + '. Выражение «' + a + ' : ' + f1 + ' × ' + f2 + '» считают слева направо — это ' + fmt(a / f1) + ' × ' + f2 + ' = ' + fmt(a / f1 * f2) + ', то есть умножение, а не деление на ' + k + '.';
+    }
+    var seen = {}, pool = bad.filter(function (b) { if (Math.abs(b.v - target) < 1e-9 || seen[b.t] || b.t === good.t) return false; seen[b.t] = 1; return true; });
+    var opts = shuffle(pool).slice(0, 3); opts.push(good); opts = shuffle(opts);
+    return { kind: 'choice', html: 'Какое выражение равно ' + expr(a + ' ' + (op === 'mul' ? '×' : ':') + ' ' + k) + '?', options: opts.map(function (x) { return x.t; }), answer: opts.indexOf(good),
+      hint: 'Разложи ' + k + ' на множители: ' + kAsProd(k, fs) + '. Умножать (делить) надо по очереди на каждый множитель.', explain: why };
+  });
+
+  /* умножение и деление на 5, 25, 50, 125 через круглые числа; o.op 'mul' | 'div' | 'mix', o.m — список из 5 25 50 125 */
+  var TRICK = { 5: { big: 10, d: 2, w: 'пятёрка — половина десятка' }, 50: { big: 100, d: 2, w: '50 — половина сотни' },
+    25: { big: 100, d: 4, w: '25 — четверть сотни' }, 125: { big: 1000, d: 8, w: '125 — восьмая часть тысячи' } };
+  var TRICK_A = { 5: [12, 99, 12, 99], 50: [12, 99, 4, 40], 25: [12, 48, 4, 40], 125: [8, 48, 3, 24] };      /* a для ×; q для : */
+  R.svTrick = TRICK; R.svTrickA = TRICK_A;
+  reg('svSeqRound', function (o) {
+    var op = o.op === 'mix' ? pick(['mul', 'div']) : (o.op || 'mul'), m = pick(o.m || [5, 50, 25, 125]), T = TRICK[m], r = TRICK_A[m], a, q, x, ans, html, why, hint;
+    if (op === 'mul') {
+      a = rand(r[0], r[1]); if (a % 10 === 0) a++; x = a * T.big; ans = a * m;
+      html = expr(fmt(a) + ' × ' + m + ' ='); hint = 'Умножить на ' + m + ' — то же, что умножить на ' + fmt(T.big) + ' и разделить на ' + T.d + ' (' + T.w + ').';
+      why = fmt(a) + ' × ' + m + ' = ' + fmt(a) + ' × ' + fmt(T.big) + ' : ' + T.d + ' = ' + fmt(x) + ' : ' + T.d + ' = ' + fmt(ans) + '.';
+    } else {
+      q = rand(r[2], r[3]); a = q * m; x = a * T.d; ans = q;
+      html = expr(fmt(a) + ' : ' + m + ' ='); hint = 'Раздели на ' + m + ' так: умножь на ' + T.d + ' и раздели на ' + fmt(T.big) + ', ведь ' + m + ' × ' + T.d + ' = ' + fmt(T.big) + '.';
+      why = fmt(a) + ' : ' + m + ' = ' + fmt(a) + ' × ' + T.d + ' : ' + fmt(T.big) + ' = ' + fmt(x) + ' : ' + fmt(T.big) + ' = ' + fmt(q) + '.';
+    }
+    return { kind: 'num', html: 'Вычисли удобным способом: ' + html, answer: ans, hint: hint, explain: why };
+  });
+
+  /* удобный порядок: 25 × 17 × 4 */
+  var PAIRS = [[25, 4], [5, 2], [125, 8], [50, 2], [250, 4], [20, 5]];
+  reg('svSeqOrder', function (o) {
+    var pr = pick(o.pairs || PAIRS), P = pr[0] * pr[1], lo = P >= 100 ? 3 : 13, hi = P >= 1000 ? 12 : (P >= 100 ? 19 : 97), c = rand(lo, hi), sw = Math.random() < 0.5;
+    var p1 = sw ? pr[1] : pr[0], p2 = sw ? pr[0] : pr[1], r = Math.random(), arr = r < 0.75 ? [p1, c, p2] : (r < 0.88 ? [c, p1, p2] : [p1, p2, c]);
+    return { kind: 'num', html: 'Вычисли удобным способом: ' + expr(arr.join(' × ') + ' ='), answer: P * c,
+      hint: 'Найди два числа, произведение которых круглое: ' + p1 + ' × ' + p2 + ' = ' + fmt(P) + '. Перемножь их первыми.',
+      explain: arr.join(' × ') + ' = (' + p1 + ' × ' + p2 + ') × ' + c + ' = ' + fmt(P) + ' × ' + c + ' = ' + fmt(P * c) + '.' };
+  });
+
+  /* задачи на умножение: o.form 'comp' (множитель составной) | 'three' (три множителя) | 'any' */
+  var HOUR = ['час', 'часа', 'часов'], DAYF = ['день', 'дня', 'дней'], PACK = ['пачка', 'пачки', 'пачек'];
+  function uw(n, u) { return typeof u === 'string' ? u : R.plural(n, u); }
+  var COMP = [
+    { a: [12, 90], k: [6, 8, 9, 12, 15], u: ['деталь', 'детали', 'деталей'],
+      t: function (a, k) { return 'Мастер изготавливает ' + qty(a, ['деталь', 'детали', 'деталей']) + ' в час. Сколько деталей он изготовит за ' + qty(k, HOUR) + '?'; } },
+    { a: [30, 95], k: [4, 6, 8, 9, 12], u: 'км',
+      t: function (a, k) { return 'Автобус проезжает ' + qty(a, 'км') + ' за час. Какое расстояние он проедет за ' + qty(k, HOUR) + '?'; } },
+    { a: [15, 90], k: [6, 8, 9, 12, 15], u: 'руб.',
+      t: function (a, k) { return 'Один билет в музей стоит ' + qty(a, 'руб.') + '. Сколько нужно заплатить за ' + qty(k, ['билет', 'билета', 'билетов']) + '?'; } },
+    { a: [12, 48], k: [6, 8, 9, 12, 15], u: 'кг',
+      t: function (a, k) { return 'Масса одного ящика яблок ' + qty(a, 'кг') + '. Какова масса ' + k + ' таких ящиков?'; } },
+    { a: [16, 40], k: [6, 8, 9, 12, 15], u: ['место', 'места', 'мест'],
+      t: function (a, k) { return 'В каждом ряду зрительного зала ' + qty(a, ['место', 'места', 'мест']) + '. Сколько мест в ' + k + ' таких рядах?'; } },
+    { a: [24, 96], k: [4, 6, 8, 9, 12], u: ['страница', 'страницы', 'страниц'],
+      t: function (a, k) { return 'В одной книге ' + qty(a, ['страница', 'страницы', 'страниц']) + '. Сколько страниц в ' + k + ' таких книгах?'; } }
+  ];
+  /* три множителя: r — диапазоны чисел (a, b, c), t — текст, x — результат первого действия, s — строки решения, u — единица ответа */
+  var THREEP = [
+    { r: [[10, 50], [3, 20], [3, 20]], u: ['тетрадь', 'тетради', 'тетрадей'], x: function (a, b) { return a * b; },
+      t: function (a, b, c) { return 'В каждой пачке ' + qty(a, ['тетрадь', 'тетради', 'тетрадей']) + ', а в каждой коробке ' + qty(b, PACK) + '. Сколько тетрадей в ' + c + ' таких коробках?'; },
+      s: function (a, b, c, x, y) { return ['В одной коробке: ' + a + ' × ' + b + ' = ' + fmt(x) + ' (тетр.).', 'Во всех коробках: ' + fmt(x) + ' × ' + c + ' = ' + fmt(y) + ' (тетр.).']; } },
+    { r: [[15, 130], [4, 10], [3, 20]], u: ['деталь', 'детали', 'деталей'], x: function (a, b) { return a * b; },
+      t: function (a, b, c) { return 'Станок делает ' + qty(a, ['деталь', 'детали', 'деталей']) + ' в час и работает ' + qty(b, HOUR) + ' в день. Сколько деталей он сделает за ' + qty(c, DAYF) + '?'; },
+      s: function (a, b, c, x, y) { return ['За один день: ' + a + ' × ' + b + ' = ' + fmt(x) + ' (дет.).', 'За ' + qty(c, DAYF) + ': ' + fmt(x) + ' × ' + c + ' = ' + fmt(y) + ' (дет.).']; } },
+    { r: [[5, 50], [2, 20], [5, 25]], u: 'руб.', x: function (a, b, c) { return b * c; },
+      t: function (a, b, c) { return 'Одна тетрадь стоит ' + qty(a, 'руб.') + '. Сколько рублей стоят ' + qty(b, PACK) + ' по ' + c + ' ' + R.plural(c, ['тетрадь', 'тетради', 'тетрадей']) + '?'; },
+      s: function (a, b, c, x, y) { return ['Тетрадей всего: ' + b + ' × ' + c + ' = ' + fmt(x) + ' (шт.).', 'Стоимость: ' + a + ' × ' + fmt(x) + ' = ' + fmt(y) + ' (руб.).']; } },
+    { r: [[15, 100], [4, 25], [3, 20]], u: 'руб.', x: function (a, b, c) { return b * c; },
+      t: function (a, b, c) { return 'В магазин привезли ' + qty(c, ['ящик', 'ящика', 'ящиков']) + ' яблок, по ' + qty(b, 'кг') + ' в каждом. Яблоки продали по ' + qty(a, 'руб.') + ' за килограмм. Сколько рублей получили за все яблоки?'; },
+      s: function (a, b, c, x, y) { return ['Яблок всего: ' + c + ' × ' + b + ' = ' + fmt(x) + ' (кг).', 'Выручка: ' + a + ' × ' + fmt(x) + ' = ' + fmt(y) + ' (руб.).']; } }
+  ];
+  function threeNums(sc) {
+    var g = 0, F, pr, ij, t, ok;
+    for (;;) {
+      if (++g > 800) throw new Error('svSeqProb: нет чисел');
+      F = sc.r.map(function (r) { return rand(r[0], r[1]); });
+      if (Math.random() < 0.65) {
+        pr = pick(PAIRS); if (Math.random() < 0.5) pr = [pr[1], pr[0]];
+        ij = pick([[0, 1], [0, 2], [1, 2]]); F[ij[0]] = pr[0]; F[ij[1]] = pr[1];
+      }
+      ok = F[2] % 10 !== 1;
+      for (t = 0; t < 3; t++) if (F[t] < sc.r[t][0] || F[t] > sc.r[t][1]) ok = false;
+      if (ok) return F;
+    }
+  }
+  reg('svSeqProb', function (o) {
+    var form = o.form === 'comp' || o.form === 'three' ? o.form : pick(['comp', 'three']);
+    if (form === 'comp') {
+      var sc = pick(COMP), k = pick(sc.k), fs = pick(FACT[k]), a = numA(k, sc.a[0], sc.a[1]), ans = a * k;
+      return { kind: 'num', html: sc.t(a, k), answer: ans,
+        hint: 'Число ' + k + ' можно разложить на множители: ' + kAsProd(k, fs) + '. Умножай по очереди.',
+        explain: stepsL(['Всего: ' + seqChain(a, k, fs, '×').replace(/\.$/, '') + ' (' + uw(ans, sc.u) + ').'], qty(ans, sc.u)) };
+    }
+    var s3 = pick(THREEP), F = threeNums(s3), y = F[0] * F[1] * F[2], x = s3.x(F[0], F[1], F[2]), L = s3.s(F[0], F[1], F[2], x, y), i, j, t, P;
+    for (i = 0; i < 3; i++) for (j = i + 1; j < 3; j++) {
+      P = F[i] * F[j];
+      if (P === 10 || P === 100 || P === 1000) { t = 3 - i - j; L.push('Удобно перемножать так: ' + F[i] + ' × ' + F[j] + ' × ' + F[t] + ' = ' + fmt(P) + ' × ' + F[t] + ' = ' + fmt(y) + '.'); i = 9; break; }
+    }
+    return { kind: 'num', html: s3.t(F[0], F[1], F[2]), answer: y,
+      hint: 'Задача решается в два действия, множителей три. Если среди них есть пара вроде 25 и 4 (дающая круглое число), перемножь её первой.',
+      explain: stepsL(L, qty(y, s3.u)) };
+  });
+
+  /* задачи на деление: o.form 'comp' (делитель составной) | 'chain' (a : b : c) | 'any' */
+  var COMPD = [
+    { q: [12, 90], k: [6, 8, 9, 12, 15], u: ['деталь', 'детали', 'деталей'],
+      t: function (S, k) { return 'За ' + qty(k, HOUR) + ' мастер изготовил ' + qty(S, ['деталь', 'детали', 'деталей']) + '. Сколько деталей он изготавливал за час?'; } },
+    { q: [30, 95], k: [4, 6, 8, 9, 12], u: 'км',
+      t: function (S, k) { return 'Автобус проехал ' + qty(S, 'км') + ' за ' + qty(k, HOUR) + '. Сколько километров он проезжал за каждый час?'; } },
+    { q: [15, 90], k: [6, 8, 9, 12, 15], u: 'руб.',
+      t: function (S, k) { return 'За ' + qty(k, ['билет', 'билета', 'билетов']) + ' одинаковой цены заплатили ' + qty(S, 'руб.') + '. Сколько стоит один билет?'; } },
+    { q: [12, 48], k: [6, 8, 9, 12, 15], u: 'кг',
+      t: function (S, k) { return qty(k, ['ящик', 'ящика', 'ящиков']) + ' яблок одинаковой массы весят ' + qty(S, 'кг') + '. Сколько весит один ящик?'; } },
+    { q: [16, 60], k: [6, 8, 9, 12, 15], u: ['страница', 'страницы', 'страниц'],
+      t: function (S, k) { return 'В ' + k + ' одинаковых книгах ' + qty(S, ['страница', 'страницы', 'страниц']) + '. Сколько страниц в одной книге?'; } }
+  ];
+  var CHAIN = [
+    { b: [5, 6, 8, 10, 12, 15, 20, 25], c: [4, 5, 6, 8, 10], q: [2, 20], l1: 'пачек', l2: 'коробок', ans: ['коробка', 'коробки', 'коробок'],
+      t: function (S, b, c) { return qty(S, ['книга', 'книги', 'книг']) + ' связали в пачки по ' + b + ' ' + R.plural(b, ['книга', 'книги', 'книг']) + ', а пачки уложили в коробки по ' + c + ' ' + R.plural(c, PACK) + '. Сколько получилось коробок?'; } },
+    { b: [2, 3, 4, 5, 6, 8], c: [5, 6, 8, 10, 12], q: [2, 25], l1: 'пакетов', l2: 'ящиков', ans: ['ящик', 'ящика', 'ящиков'],
+      t: function (S, b, c) { return 'На склад привезли ' + qty(S, 'кг') + ' яблок. Их расфасовали в пакеты по ' + qty(b, 'кг') + ', а пакеты уложили в ящики по ' + c + ' ' + R.plural(c, ['пакет', 'пакета', 'пакетов']) + '. Сколько потребовалось ящиков?'; } },
+    { b: [8, 10, 12, 15, 20], c: [3, 4, 5, 6], q: [2, 12], l1: 'рядов', l2: 'секций', ans: ['секция', 'секции', 'секций'],
+      t: function (S, b, c) { return 'В зале ' + qty(S, ['стул', 'стула', 'стульев']) + '. Их расставили в ряды по ' + b + ' ' + R.plural(b, ['стул', 'стула', 'стульев']) + ', а ряды объединили в секции по ' + c + ' ' + R.plural(c, ['ряд', 'ряда', 'рядов']) + '. Сколько получилось секций?'; } },
+    { b: [12, 15, 18, 20, 25, 30, 40], c: [4, 5, 6, 8], q: [2, 15], l1: 'часов', l2: 'дней', ans: DAYF,
+      t: function (S, b, c) { return 'Мастер должен сделать ' + qty(S, ['деталь', 'детали', 'деталей']) + '. За час он делает ' + qty(b, ['деталь', 'детали', 'деталей']) + ', а работает по ' + c + ' ' + R.plural(c, HOUR) + ' в день. За сколько дней он выполнит заказ?'; } },
+    { b: [3, 4, 5, 6], c: [5, 6, 8], q: [2, 9], l1: 'часов', l2: 'дней', ans: DAYF,
+      t: function (S, b, c) { return 'Турист должен пройти ' + qty(S, 'км') + '. За час он проходит ' + qty(b, 'км') + ', а в день идёт по ' + c + ' ' + R.plural(c, HOUR) + '. За сколько дней он пройдёт весь путь?'; } }
+  ];
+  reg('svSeqProbD', function (o) {
+    var form = o.form === 'comp' || o.form === 'chain' ? o.form : pick(['comp', 'chain']);
+    if (form === 'comp') {
+      var sc = pick(COMPD), k = pick(sc.k), fs = pick(FACT[k]), q = rand(sc.q[0], sc.q[1]), S = q * k;
+      return { kind: 'num', html: sc.t(S, k), answer: q,
+        hint: 'Число ' + k + ' можно разложить на множители: ' + kAsProd(k, fs) + '. Дели по очереди.',
+        explain: stepsL([seqChain(S, k, fs, ':').replace(/\.$/, '') + ' (' + uw(q, sc.u) + ').'], qty(q, sc.u)) };
+    }
+    var ch = pick(CHAIN), b, c, qq, T, g = 0;
+    do { b = pick(ch.b); c = pick(ch.c); qq = rand(ch.q[0], ch.q[1]); T = qq * b * c; g++; } while (T > 3000 && g < 80);
+    return { kind: 'num', html: ch.t(T, b, c), answer: qq,
+      hint: 'Задача в два действия: сначала раздели всё на ' + b + ', потом полученное число раздели на ' + c + '.',
+      explain: stepsL([fmt(T) + ' : ' + b + ' = ' + fmt(T / b) + ' (' + ch.l1 + ').', fmt(T / b) + ' : ' + c + ' = ' + fmt(qq) + ' (' + ch.l2 + ').',
+        'Проверка: ' + b + ' × ' + c + ' = ' + b * c + '; ' + fmt(T) + ' : ' + b * c + ' = ' + fmt(qq) + '.'], qty(qq, ch.ans)) };
+  });
+
+  /* ================= цепочка вычислений и виджет «По частям» ================= */
+  /* R.svChainSVG(nodes, ops): числа в рамках, между ними стрелки с действиями; '?' — пока неизвестно */
+  R.svChainSVG = function (nodes, ops) {
+    var FS = 16, OF = 14, BH = 38, TOP = 8, n = nodes.length, i, s = '', x = 4, xs = [], ws = [], gaps = [], cy = TOP + BH / 2;
+    for (i = 0; i < n; i++) {
+      ws.push(Math.max(48, Math.ceil(tw(nodes[i], FS) + 22)));
+      if (i < n - 1) gaps.push(Math.max(n > 3 ? 54 : 62, Math.ceil(tw(ops[i], OF) + 26)));
+    }
+    for (i = 0; i < n; i++) { xs.push(x); x += ws[i] + (i < n - 1 ? gaps[i] : 0); }
+    var W = x + 4, H = TOP + BH + 8, desc = [];
+    for (i = 0; i < n; i++) {
+      var q = nodes[i] === '?', last = i === n - 1 && !q && n > 1;
+      s += '<rect class="sv-cn' + (q ? ' sv-cq' : '') + (last ? ' sv-hl' : '') + '" x="' + xs[i] + '" y="' + TOP + '" width="' + ws[i] + '" height="' + BH + '" rx="7"/>' +
+        '<text class="' + (q ? 'sv-cnq' : 'sv-cnt') + '" x="' + (xs[i] + ws[i] / 2) + '" y="' + (cy + 5.5) + '" text-anchor="middle" style="font-size:' + FS + 'px">' + nodes[i] + '</text>';
+      desc.push(q ? 'пока неизвестно' : nodes[i]);
+      if (i < n - 1) {
+        var x1 = xs[i] + ws[i] + 4, x2 = xs[i + 1] - 4;
+        s += '<line class="sv-ca" x1="' + x1 + '" y1="' + cy + '" x2="' + (x2 - 5) + '" y2="' + cy + '"/>' +
+          '<path class="sv-ch" d="M' + x2 + ' ' + cy + 'l-9 -5.5v11z"/>' +
+          '<text class="sv-cop" x="' + ((x1 + x2) / 2) + '" y="' + (cy - 8) + '" text-anchor="middle" style="font-size:' + OF + 'px">' + ops[i] + '</text>';
+        desc.push('действие ' + ops[i]);
+      }
+    }
+    return '<svg class="fig sv-rods sv-chain" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Цепочка вычислений: ' + desc.join(', ') + '">' + s + '</svg>';
+  };
+
+  R.widgetMounts.svSeq = function (host) {
+    var op = host.getAttribute('data-op') === 'div' ? 'div' : 'mul', mode = host.getAttribute('data-mode') === 'trick' ? 'trick' : 'split';
+    var ks = mode === 'trick' ? [5, 25, 50, 125] : [4, 6, 8, 9, 12, 15];
+    var k = Number(host.getAttribute('data-k') || ks[0]), a = Number(host.getAttribute('data-a') || 0), vi = 0, step = 0;
+    var lab = { 'split-mul': 'Умножить на:', 'split-div': 'Разделить на:', 'trick-mul': 'Умножить на:', 'trick-div': 'Разделить на:' }[mode + '-' + op];
+    function newA() {
+      if (mode === 'trick') {
+        var r = TRICK_A[k];
+        if (op === 'mul') { do { a = rand(r[0], r[1]); } while (a % 10 === 0); } else a = rand(r[2], r[3]) * k;
+      } else if (op === 'mul') a = numA(k, 12, k <= 9 ? 99 : 60);
+      else a = rand(k <= 9 ? 12 : 6, k <= 9 ? 99 : 50) * k;
+    }
+    function fits() {
+      if (!a) return false;
+      if (op === 'div') return a % k === 0;
+      return mode === 'trick' ? (a >= TRICK_A[k][0] && a <= TRICK_A[k][1] && a % 10 !== 0) : (a < (k <= 9 ? 100 : 61) && a % 10 !== 0);
+    }
+    if (!fits()) newA();
+    host.innerHTML = '<div class="sv-ks"><span class="sv-kl">' + lab + '</span></div><div class="sv-figwrap"></div><p class="facts sv-wnote"></p>' +
+      '<div class="sv-tools"><button class="btn primary" type="button" data-a="next">Дальше</button> ' +
+      (mode === 'split' ? '<button class="btn soft" type="button" data-a="alt">Другое разложение</button> ' : '') +
+      '<button class="btn soft" type="button" data-a="again">Другое число</button></div>';
+    var kEl = host.querySelector('.sv-ks'), fig = host.querySelector('.sv-figwrap'), note = host.querySelector('.sv-wnote'), nx = host.querySelector('[data-a="next"]'),
+      alt = host.querySelector('[data-a="alt"]'), ag = host.querySelector('[data-a="again"]'), kb = [];
+    ks.forEach(function (v) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn soft sv-kb'; b.textContent = v;
+      b.addEventListener('click', function () { k = v; vi = 0; step = 0; if (!fits()) newA(); draw(); });
+      kEl.appendChild(b); kb.push(b);
+    });
+    function draw() {
+      var nodes, ops, t, i, sg = op === 'mul' ? '×' : ':', A = fmt(a);
+      kb.forEach(function (b, j) { var on = ks[j] === k; b.classList.toggle('sv-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      if (mode === 'split') {
+        var list = FACT[k], fs = list[vi % list.length], f1 = fs[0], f2 = fs[1], x1 = op === 'mul' ? a * f1 : a / f1, res = op === 'mul' ? x1 * f2 : x1 / f2;
+        nodes = [A, step >= 1 ? fmt(x1) : '?', step >= 2 ? fmt(res) : '?'];
+        ops = [sg + ' ' + f1, sg + ' ' + f2];
+        if (alt) { alt.disabled = list.length < 2; }
+        var tn = Math.floor(a / 10) * 10, un = a % 10;
+        t = op === 'mul' ? [
+          'Хотим вычислить ' + A + ' × ' + k + '. Разложим ' + k + ' на множители: <b class="sv-f">' + k + ' = ' + f1 + ' × ' + f2 + '</b>. Умножать будем по очереди — сначала на ' + f1 + ', потом на ' + f2 + '. Нажми «Дальше».',
+          'Первый шаг: ' + A + ' × ' + f1 + ' = <b>' + fmt(x1) + '</b>.',
+          'Второй шаг: ' + fmt(x1) + ' × ' + f2 + ' = <b>' + fmt(res) + '</b>. Значит, ' + A + ' × ' + k + ' = ' + fmt(res) + '.',
+          'Проверим другим способом: ' + A + ' × ' + k + ' = ' + tn + ' × ' + k + ' + ' + un + ' × ' + k + ' = ' + fmt(tn * k) + ' + ' + fmt(un * k) + ' = ' + fmt(a * k) + '. Ответ тот же.'
+        ] : [
+          'Хотим вычислить ' + A + ' : ' + k + '. Разложим ' + k + ' на множители: <b class="sv-f">' + k + ' = ' + f1 + ' × ' + f2 + '</b>. Делить будем по очереди — сначала на ' + f1 + ', потом на ' + f2 + '. Нажми «Дальше».',
+          'Первый шаг: ' + A + ' : ' + f1 + ' = <b>' + fmt(x1) + '</b>.',
+          'Второй шаг: ' + fmt(x1) + ' : ' + f2 + ' = <b>' + fmt(res) + '</b>. Значит, ' + A + ' : ' + k + ' = ' + fmt(res) + '.',
+          'Проверка умножением: ' + fmt(res) + ' × ' + k + ' = ' + A + '. Всё сходится.'
+        ];
+      } else {
+        var T = TRICK[k], X = op === 'mul' ? a * T.big : a * T.d, res2 = op === 'mul' ? a * k : a / k;
+        nodes = [A, step >= 1 ? fmt(X) : '?', step >= 2 ? fmt(res2) : '?'];
+        ops = op === 'mul' ? ['× ' + fmt(T.big), ': ' + T.d] : ['× ' + T.d, ': ' + fmt(T.big)];
+        var tn2 = Math.floor(a / 10) * 10, un2 = a % 10;
+        t = op === 'mul' ? [
+          'Хотим вычислить ' + A + ' × ' + k + '. Заметим: ' + T.w + ', то есть <span class="sv-f">' + k + ' = ' + fmt(T.big) + ' : ' + T.d + '</span>. Поэтому умножим на ' + fmt(T.big) + ', а потом разделим на ' + T.d + '. Нажми «Дальше».',
+          'Умножаем на ' + fmt(T.big) + ': просто приписываем нули. ' + A + ' × ' + fmt(T.big) + ' = <b>' + fmt(X) + '</b>.',
+          'Делим на ' + T.d + ': ' + fmt(X) + ' : ' + T.d + ' = <b>' + fmt(res2) + '</b>. Значит, ' + A + ' × ' + k + ' = ' + fmt(res2) + '.',
+          'Проверим другим способом: ' + A + ' × ' + k + ' = ' + tn2 + ' × ' + k + ' + ' + un2 + ' × ' + k + ' = ' + fmt(tn2 * k) + ' + ' + fmt(un2 * k) + ' = ' + fmt(a * k) + '. Ответ тот же.'
+        ] : [
+          'Хотим вычислить ' + A + ' : ' + k + '. Заметим: ' + k + ' × ' + T.d + ' = ' + fmt(T.big) + '. Поэтому умножим на ' + T.d + ', а потом разделим на ' + fmt(T.big) + '. Нажми «Дальше».',
+          'Умножаем на ' + T.d + ': ' + A + ' × ' + T.d + ' = <b>' + fmt(X) + '</b>.',
+          'Делим на ' + fmt(T.big) + ' (убираем нули): ' + fmt(X) + ' : ' + fmt(T.big) + ' = <b>' + fmt(res2) + '</b>. Значит, ' + A + ' : ' + k + ' = ' + fmt(res2) + '.',
+          'Проверка умножением: ' + fmt(res2) + ' × ' + k + ' = ' + A + '. Всё сходится.'
+        ];
+      }
+      fig.innerHTML = R.svChainSVG(nodes, ops);
+      note.innerHTML = t[step];
+      nx.textContent = step >= 3 ? 'Сначала' : 'Дальше';
+    }
+    nx.addEventListener('click', function () { step = step >= 3 ? 0 : step + 1; draw(); });
+    if (alt) alt.addEventListener('click', function () { vi++; step = 0; draw(); });
+    ag.addEventListener('click', function () { var old = a, g = 0; do { newA(); g++; } while (a === old && g < 20); step = 0; draw(); });
+    draw();
+  };
+
   /* @@INSERT */
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -25,3 +25,16 @@
 .sv-wnote { min-height: 3.2em; margin: .3em 0; }
 .sv-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .sv-tools .btn { font-size: .9rem; padding: .55em 1em; }
+
+/* цепочка вычислений (уроки 106–107) */
+.fig .sv-cn { fill: var(--surface); stroke: currentColor; stroke-width: 2; }
+.fig .sv-cn.sv-hl { fill: var(--mark); }
+.fig .sv-cn.sv-cq { stroke: var(--red); stroke-dasharray: 5 4; }
+.fig text.sv-cnt { font-weight: 700; }
+.fig text.sv-cnq { fill: var(--red); font-weight: 700; }
+.fig text.sv-cop { font-weight: 700; fill: var(--ink-2); }
+.fig .sv-ca { stroke: currentColor; stroke-width: 2; }
+.fig .sv-ch { fill: currentColor; }
+.sv-chain { margin: .4em 0; }
+.sv-tools .btn:disabled { opacity: .45; cursor: default; }
+.sv-f { white-space: nowrap; }
