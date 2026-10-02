@@ -273,10 +273,7 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .fb .colsteps { margin-top: .2em; }
 .ex { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.7; }
 
-/* ---------- подвал сайта и страница политики ---------- */
-.sitefoot { max-width: 900px; margin: -46px auto 0; padding: 0 16px 34px; font-size: .85rem; color: var(--ink-2); }
-.sitefoot a { color: var(--ink-2); }
-.sitefoot a:hover { color: var(--ink); }
+/* ---------- страница политики ---------- */
 .legal ul { max-width: 64ch; margin: 0 0 .9em; padding-left: 1.3em; }
 .legal li { margin: 0 0 .4em; }
 .legal .goal { font-size: .95rem; }
@@ -291,7 +288,6 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .cookie p { margin: 0; flex: 1 1 320px; }
 .cookie-btns { display: flex; gap: 8px; }
 .cookie .btn { padding: .55em 1em; font-size: .9rem; }
-.sitefoot .linklike { color: var(--ink-2); }
 
 /* ---------- деление уголком и неполные произведения ---------- */
 .cc-d.ul { border-bottom: 2px solid var(--ink); }
