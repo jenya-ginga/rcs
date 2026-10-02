@@ -316,4 +316,5 @@ mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius:
 .mt { border-collapse: collapse; margin: .8em 0 1em; font-size: 1rem; }
 .mt th, .mt td { border: 1.5px solid var(--line); padding: .35em .8em; text-align: left; }
 .mt th { background: var(--soft); color: var(--ink); }
+@media (max-width: 480px) { .mt { font-size: .92rem; } .mt th, .mt td { padding: .3em .45em; } }
 .soft { color: var(--ink-2); font-size: .9em; }

@@ -43,9 +43,19 @@
   function titleOf(n) { return R.LESSONS[n] ? R.LESSONS[n].title : 'Урок ' + n; }
   function availList() { return Object.keys(R.LESSONS).map(Number).sort(function (a, b) { return a - b; }); }
 
+  /* Режим выгрузки (отдельные HTML-файлы уроков): G.RKS_EXPORT = { n, avail:[...], file:function(n){…}, map:'index.html', mapOnly:true|false } */
+  var X = G.RKS_EXPORT || null;
+  function lhref(n) { return X ? X.file(n) : '#/lesson/' + n; }
+  function maphref() { return X ? X.map : '#/'; }
+  function hasL(n) { return X ? X.avail.indexOf(n) >= 0 : !!R.LESSONS[n]; }
+
   /* ---------- маршрутизация ---------- */
   function parse() {
     var p = location.hash.replace(/^#\/?/, '').split('/');
+    if (X) {
+      if (X.mapOnly) return { view: 'map' };
+      return { view: 'lesson', n: X.n, sec: (p[0] === 'lesson' && Number(p[1]) === X.n) ? (p[2] || null) : null };
+    }
     if (p[0] === 'lesson' && p[1]) return { view: 'lesson', n: Number(p[1]), sec: p[2] || null };
     return { view: 'map' };
   }
@@ -73,7 +83,7 @@
       '<p class="lead">Тренажёр по арифметике: в каждом уроке короткая теория, устный счёт, примеры и задачи. Числа каждый раз новые, поэтому заниматься можно сколько угодно.</p>';
     var row = el('div', 'hero-row');
     var btn = el('a', 'btn primary big', 'Продолжить: урок ' + next);
-    btn.href = '#/lesson/' + next;
+    btn.href = lhref(next);
     row.appendChild(btn);
     row.appendChild(el('p', 'hero-stat', 'Готово уроков: <b>' + done + '</b> из ' + avail.length + ' доступных · всего в курсе ' + R.TOTAL));
     hero.appendChild(row);
@@ -97,7 +107,7 @@
           var t = titleOf(n), k = R.KINDS[n], g = lessonGrade(n), li = el('li', 'li' + (R.LESSONS[n] ? ' avail' : ' soon'));
           var inner = '<span class="li-n">' + n + '</span><span class="li-t">' + t + '</span>' +
             (g ? '<span class="hand mark g' + g + '" title="Оценка за урок">' + g + '</span>' : (R.LESSONS[n] ? '' : '<span class="li-soon">скоро</span>'));
-          if (R.LESSONS[n]) { var a = el('a', null, inner); a.href = '#/lesson/' + n; li.appendChild(a); }
+          if (R.LESSONS[n]) { var a = el('a', null, inner); a.href = lhref(n); li.appendChild(a); }
           else li.innerHTML = inner;
           ol.appendChild(li);
         }
@@ -137,7 +147,7 @@
     var L = R.LESSONS[n], title = titleOf(n);
     document.title = 'Урок ' + n + ' — Арифметика, 4 класс';
     var page = el('main', 'page');
-    var back = el('a', 'back', '← Карта курса'); back.href = '#/';
+    var back = el('a', 'back', '← Карта курса'); back.href = maphref();
     page.appendChild(back);
 
     if (!L) {
@@ -179,9 +189,9 @@
 
     /* соседние уроки */
     var nav = el('nav', 'lnav');
-    var prevN = R.LESSONS[n - 1] ? n - 1 : null, nextN = R.LESSONS[n + 1] ? n + 1 : null;
-    if (prevN) { var pa = el('a', null, '← Урок ' + prevN); pa.href = '#/lesson/' + prevN; nav.appendChild(pa); } else nav.appendChild(el('span'));
-    if (nextN) { var na = el('a', null, 'Урок ' + nextN + ' →'); na.href = '#/lesson/' + nextN; nav.appendChild(na); }
+    var prevN = hasL(n - 1) ? n - 1 : null, nextN = hasL(n + 1) ? n + 1 : null;
+    if (prevN) { var pa = el('a', null, '← Урок ' + prevN); pa.href = lhref(prevN); nav.appendChild(pa); } else nav.appendChild(el('span'));
+    if (nextN) { var na = el('a', null, 'Урок ' + nextN + ' →'); na.href = lhref(nextN); nav.appendChild(na); }
     sheet.appendChild(nav);
 
     page.appendChild(sheet);
@@ -457,9 +467,9 @@
         na.href = '#/lesson/' + cfg.n + '/' + nx;
         acts.appendChild(na);
       } else {
-        var nl = R.LESSONS[cfg.n + 1] ? cfg.n + 1 : null;
+        var nl = hasL(cfg.n + 1) ? cfg.n + 1 : null;
         var fa = el('a', 'btn primary', nl ? 'К уроку ' + nl : 'К карте курса');
-        fa.href = nl ? '#/lesson/' + nl : '#/';
+        fa.href = nl ? lhref(nl) : maphref();
         acts.appendChild(fa);
       }
       host.appendChild(acts);
