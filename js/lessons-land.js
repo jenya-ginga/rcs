@@ -305,5 +305,27 @@
     ]
   };
 
+  /* ---------------- Урок 97: контрольная работа ---------------- */
+  L[97] = {
+    title: 'Контрольная работа: площадь и меры площади',
+    test: true,
+    goal: 'Проверить, как усвоены площадь прямоугольника и составных фигур, меры площади от гектара до квадратного сантиметра и задачи на вычисление площадей. Подсказок нет.',
+    theory: [],
+    testSpec: [
+      { g: 'ldConv', n: 1, o: { units: ['га', 'а', 'м²', 'дм²', 'см²'], qmax: 50, round: true } },
+      { g: 'ldConvComp', n: 1, o: { pairs: ['а-м²', 'га-а', 'м²-дм²', 'дм²-см²'], dir: 'turn' } },
+      { g: 'ldPlot', n: 1, o: { target: 'а' } },
+      { g: 'ldCompare', n: 1, o: { units: ['га', 'а', 'м²', 'дм²', 'см²'] } },
+      { g: 'arComp', n: 1 },
+      { g: 'arAreaUnits', n: 1 },
+      { g: 'pldSqm', n: 1 },
+      { g: 'ldSideArea', n: 1 },
+      { g: 'pldFence', n: 1 },
+      { g: 'pldCrop', n: 1 },
+      { g: 'pldRent', n: 1 },
+      { g: 'pldBack', n: 1 }
+    ]
+  };
+
   /* @@LESSONS */
 })(typeof window !== 'undefined' ? window : globalThis);
