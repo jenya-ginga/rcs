@@ -1,0 +1,45 @@
+/* Блок «Объём» (уроки 108–121). Префикс .vo- */
+
+/* --- параллелепипед и куб --- */
+.fig .vo-ft { fill: var(--soft); stroke: none; }
+.fig .vo-tp { fill: var(--surface); stroke: none; }
+.fig .vo-rt { fill: var(--line); fill-opacity: .55; stroke: none; }
+.fig .vo-g { fill: none; stroke: var(--ink-2); stroke-opacity: .5; stroke-width: 1; }
+.fig .vo-e { fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linejoin: round; stroke-linecap: round; }
+.fig .vo-e2 { fill: none; stroke: var(--green); stroke-width: 1.8; stroke-linecap: round; }
+.fig .vo-hid { fill: none; stroke: var(--ink-2); stroke-width: 1.6; stroke-dasharray: 5 4; stroke-linecap: round; }
+.fig .vo-he { fill: none; stroke: var(--red); stroke-width: 4.5; stroke-linecap: round; }
+.fig .vo-hv { fill: var(--red); stroke: var(--surface); stroke-width: 1.5; }
+.fig .vo-hlf { fill: var(--mark); fill-opacity: .85; stroke: none; }
+.fig .vo-lf { fill: var(--green-bg); stroke: none; }
+.fig .vo-lr { fill: var(--green); fill-opacity: .28; stroke: none; }
+.fig .vo-lt { fill: var(--green); fill-opacity: .12; stroke: none; }
+.fig .vo-row { fill: var(--red); fill-opacity: .3; stroke: none; }
+.fig .vo-q { fill: var(--red); }
+.fig .vo-num { font-size: 12px; fill: var(--red); }
+.fig .vo-numh { font-size: 12px; fill: var(--ink-2); }
+
+/* --- развёртки --- */
+.fig .vo-nc { fill: var(--soft); stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.fig .vo-nh { fill: var(--mark); }
+.fig .vo-nr { fill: var(--red-bg); stroke: var(--red); }
+.fig .vo-ng { fill: var(--green-bg); stroke: var(--green); }
+.fig .vo-nq { fill: var(--surface); }
+
+/* --- общие блоки теории --- */
+.vo-figrow { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: flex-end; margin: .6em 0 1em; }
+.vo-figrow figure { margin: 0; text-align: center; font-size: .9rem; color: var(--ink-2); }
+.vo-figrow .fig { margin: 0 auto; }
+.vo-figrow figcaption { margin-top: 2px; max-width: 26ch; }
+.vo-opts .choice svg { margin: 0 auto; }
+
+/* --- виджеты --- */
+.vow .vo-f { display: flex; flex-direction: column; gap: 3px; }
+.vow .vo-b { font-size: .85rem; padding: .5em .9em; }
+.vo-wfig { margin: 6px 0; }
+.vo-wfig .fig { margin: 0 auto 0 0; }
+.vow .facts b { color: var(--red); }
+
+/* --- варианты ответа с рисунком (развёртки) --- */
+.choice .vo-optl { display: inline-block; vertical-align: middle; min-width: 1.6em; margin-right: .5em; font-weight: 700; color: var(--ink-2); }
+.choice .vo-fig { display: inline-block; vertical-align: middle; margin: 0; }
