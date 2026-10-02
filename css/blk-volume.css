@@ -43,3 +43,4 @@
 /* --- варианты ответа с рисунком (развёртки) --- */
 .choice .vo-optl { display: inline-block; vertical-align: middle; min-width: 1.6em; margin-right: .5em; font-weight: 700; color: var(--ink-2); }
 .choice .vo-fig { display: inline-block; vertical-align: middle; margin: 0; }
+.vo-nw { white-space: nowrap; }
